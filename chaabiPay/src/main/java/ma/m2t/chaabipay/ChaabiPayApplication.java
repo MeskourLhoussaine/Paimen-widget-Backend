@@ -1,13 +1,13 @@
-package ma.project.amanpya;
+package ma.m2t.chaabipay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AmanPyaApplication {
+public class ChaabiPayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AmanPyaApplication.class, args);
+        SpringApplication.run(ChaabiPayApplication.class, args);
     }
 
 }
