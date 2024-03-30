@@ -21,5 +21,6 @@ public interface MerchantService {
 
 
 
-    void associerMethodePaiement(Long marchandId, Set<Long> methodePaiementIds);
+    void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds);
+
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@DiscriminatorValue("PAYDIRECT")
+@DiscriminatorValue("PD")
 @Entity
 public class PayDirect extends PaymentMethod{
     private String numContrat;

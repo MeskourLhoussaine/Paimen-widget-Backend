@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class Merchant {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String merchantName;
@@ -28,13 +28,19 @@ public class Merchant {
     private String callback; //
     private String serviceid;
     private String sucretkey; //Doit etre crepty
+
     @OneToMany(mappedBy = "merchant", fetch = FetchType.EAGER)
     @JsonIgnore // Ignorer cette propriété lors de la sérialisation JSON pour éviter les boucles infinies
     private List<Transaction> transactions;
+/*
     @ManyToMany
     @JoinTable(
             name = "marchand_methodepaiement",
             joinColumns = @JoinColumn(name = "marchand_id"),
             inverseJoinColumns = @JoinColumn(name = "methodepaiement_id"))
-    private Set<PaymentMethod> methodesPaiement = new HashSet<>();
+    private Set<PaymentMethod> methodesPaiements= new HashSet<>();
+
+*/
+
+
 }

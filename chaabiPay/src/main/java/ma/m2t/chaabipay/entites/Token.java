@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@DiscriminatorValue("TOKEN")
+@DiscriminatorValue("token")
 @Entity
 public class Token extends PaymentMethod {
-    private String tokenId;
+
     private String tokenResponse;
     private String tokenName;
     private String tokenEmail;

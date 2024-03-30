@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import ma.m2t.chaabipay.dtos.MerchantDTO;
 import ma.m2t.chaabipay.services.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,8 @@ import java.util.Set;
 public class MerchantController {
     @Autowired
     private MerchantService merchantService;
+    @Autowired
+    private MerchantService merchantServicee;
 
     @GetMapping("/findAll")
     public List<MerchantDTO> listMerchantes() {
@@ -56,10 +59,24 @@ public class MerchantController {
         );
     }
 
+    @PostMapping("/associer-methodes-paiement")
+    public ResponseEntity<String> associerMethodesPaiement(@RequestParam("marchandId") Long marchandId,
+                                                           @RequestBody Set<Long> methodePaiementIds) {
+        try {
+            merchantService.associerMethodesPaiement(marchandId, methodePaiementIds);
+            return ResponseEntity.ok("Associations des méthodes de paiement effectuées avec succès.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Une erreur est survenue lors de l'association des méthodes de paiement : " + e.getMessage());
+        }
+    }
+
+/*
 @PostMapping("/{marchandId}/associer-methodes-paiement")
 public ResponseEntity<?> associerMethodesPaiement(@PathVariable Long marchandId, @RequestBody Set<Long> methodePaiementIds) {
-    merchantService.associerMethodePaiement(marchandId, methodePaiementIds);
+    merchantService.associerMethodesPaiement(marchandId, methodePaiementIds);
     return ResponseEntity.ok().build();
 }
+*/
 }
 //controller

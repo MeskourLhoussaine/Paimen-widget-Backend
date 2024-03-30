@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -25,4 +27,11 @@ public class PaymentMethod {
     @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Transaction> transactions;
+/*
+    @JsonIgnore
+    @ManyToMany
+    private Set<Merchant> merchants = new HashSet<>();
+*/
+
+
 }
