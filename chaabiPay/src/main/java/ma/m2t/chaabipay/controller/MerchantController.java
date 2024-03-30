@@ -19,8 +19,6 @@ import java.util.Set;
 public class MerchantController {
     @Autowired
     private MerchantService merchantService;
-    @Autowired
-    private MerchantService merchantServicee;
 
     @GetMapping("/findAll")
     public List<MerchantDTO> listMerchantes() {
@@ -71,12 +69,6 @@ public class MerchantController {
         }
     }
 
-/*
-@PostMapping("/{marchandId}/associer-methodes-paiement")
-public ResponseEntity<?> associerMethodesPaiement(@PathVariable Long marchandId, @RequestBody Set<Long> methodePaiementIds) {
-    merchantService.associerMethodesPaiement(marchandId, methodePaiementIds);
-    return ResponseEntity.ok().build();
+
 }
-*/
-}
-//controller
+

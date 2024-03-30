@@ -90,6 +90,9 @@ public class MerchantImplement implements MerchantService {
         merchantRepository.delete(merchant);
     }
 
+    /******************************************************************************
+     * ********************************************************************/
+
     @Override
     public String generateAndSaveSecretKey(String merchantName, String merchantHost, String merchantDescrip, String merchantLogo, String callback, String serviceid) {
         // Générer une clé secrète aléatoire
@@ -111,30 +114,8 @@ public class MerchantImplement implements MerchantService {
         // Retourner la clé secrète générée
         return secretKey;
     }
-/*
-    @Override
-    public void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds) {
-        Optional<Merchant> optionalMerchant = merchantRepository.findById(marchandId);
-        if (optionalMerchant.isPresent()) {
-            Merchant merchant = optionalMerchant.get();
-            Set<PaymentMethod> methods = merchant.getMethodesPaiements();
-
-            for (Long methodePaiementId : methodePaiementIds) {
-                Optional<PaymentMethod> optionalMethod = paimentMethodeReposirory.findById(methodePaiementId);
-                if (optionalMethod.isPresent()) {
-                    PaymentMethod method = optionalMethod.get();
-                    methods.add(method);
-                } else {
-                    // Gérer le cas où la méthode de paiement n'existe pas
-                }
-            }
-            merchant.setMethodesPaiements(methods);
-            merchantRepository.save(merchant);
-        } else {
-            // Gérer le cas où le marchand n'existe pas
-        }
-    }
-*/
+    /******************************************************************************
+     * ********************************************************************/
 
 @Override
 public void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds) {
@@ -158,25 +139,8 @@ public void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementI
         marchandMethodePaiementRepository.save(marchandMethodePaiement);
     }
 }
-/*
-    @Override
-    public void associerMethodePaiement(Long marchandId, Set<Long> methodePaiementIds) {
-        Merchant merchant = merchantRepository.findById(marchandId)
-                .orElseThrow(() -> new NotFoundException("Marchand non trouvé avec l'ID : " + marchandId));
-
-        Set<PaymentMethod> methodesPaiement = new HashSet<>();
-
-        for (Long methodePaiementId : methodePaiementIds) {
-            PaymentMethod methodePaiement = paimentMethodeReposirory.findById(methodePaiementId)
-                    .orElseThrow(() -> new NotFoundException("Méthode de paiement non trouvée avec l'ID : " + methodePaiementId));
-            methodesPaiement.add(methodePaiement);
-        }
-
-        merchant.setMethodesPaiement(methodesPaiement);
-
-        merchantRepository.save(merchant);
-    }
-*/
+    /****************Méthode pour générer une clé secrète aléatoire**************************
+     * ********************************************************************/
 
     // Méthode pour générer une clé secrète aléatoire
     private String generateSecretKey() {
