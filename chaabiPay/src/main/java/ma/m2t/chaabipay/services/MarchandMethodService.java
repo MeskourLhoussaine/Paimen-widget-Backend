@@ -9,5 +9,6 @@ public interface MarchandMethodService {
 /*
     void updateMethodStateForMerchant(Long marchandId, Long methodePaiementId, boolean newState);
     MarchandMethodePaiement findByMarchandAndMethodePaiement(Merchant marchand, PaymentMethod methodePaiement);
+
 */
 }

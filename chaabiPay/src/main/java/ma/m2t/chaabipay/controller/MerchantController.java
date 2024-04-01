@@ -68,7 +68,11 @@ public class MerchantController {
                     .body("Une erreur est survenue lors de l'association des méthodes de paiement : " + e.getMessage());
         }
     }
+/**#########################Verifier les droit d'acces####################################*/
 
-
+@GetMapping("/atorise")
+    public boolean checkAccessRights(String merchantHost, String sucretkey, String merchantName, String requestHMAC) {
+        return merchantService.checkAccessRights(merchantHost, sucretkey, merchantName, requestHMAC);
+    }
 }
 

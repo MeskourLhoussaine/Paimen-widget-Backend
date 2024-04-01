@@ -11,4 +11,6 @@ public interface TransactionService {
 
     TransactionDTO updateTransaction(TransactionDTO transactionDTO);
     void deleteTransaction(TransactionDTO transactionDTO);
+    //fonctin hashage
+    String calculateHmac(String merchantId, String orderId, double amount, String currency, String secretKey);
 }

@@ -12,29 +12,28 @@ import java.util.Date;
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
 @Table(name = "transactions")
-public class Transaction{
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // Order * * * * * *
+
     private String orderId;// id commande
     private double amount;
     private String currency;// dh
     private String status;
     private Date timestamp;
 
-    // client
     private String clientId;
     private String clientName;
     private String userEmail;
-    // hachage
     private String hmac;
-    //
-    private String Notif;
-    @ManyToOne(cascade = CascadeType.ALL)
+    private String notif;
+
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
-    //@ManyToOne(cascade = CascadeType.MERGE)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 }

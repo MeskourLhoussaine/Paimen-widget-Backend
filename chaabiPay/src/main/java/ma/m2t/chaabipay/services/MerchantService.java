@@ -21,6 +21,8 @@ public interface MerchantService {
 
 
 
-    void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds);
+    void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds) throws Exception;
+    public boolean checkAccessRights(String merchantHost, String sucretkey, String merchantName, String requestHMAC);
+
 
 }

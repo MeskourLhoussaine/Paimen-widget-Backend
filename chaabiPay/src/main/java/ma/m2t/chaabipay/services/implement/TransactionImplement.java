@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,5 +91,28 @@ public class TransactionImplement implements TransactionService {
                 Transaction transaction = dtoMapper.fromtransactionDTO(transactionDTO);
                 // Utilisation d'une lambda pour une suppression plus concise
                 transactionRepository.delete(transaction);
+        }
+        /***####################### fonction de hachage ####################################*/
+        @Override
+        public String calculateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
+                String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;
+                return hmacDigest(data, secretKey, "HmacSHA1");
+        }
+
+        private String hmacDigest(String data, String key, String algorithm) {
+                try {
+                        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
+                        Mac mac = Mac.getInstance(algorithm);
+                        mac.init(secretKeySpec);
+                        byte[] bytes = mac.doFinal(data.getBytes());
+                        StringBuilder result = new StringBuilder();
+                        for (byte b : bytes) {
+                                result.append(String.format("%02x", b));
+                        }
+                        return result.toString();
+                } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+                        log.error("Error occurred while generating HMAC: {}", e.getMessage());
+                        throw new RuntimeException("Error occurred while generating HMAC", e);
+                }
         }
 }

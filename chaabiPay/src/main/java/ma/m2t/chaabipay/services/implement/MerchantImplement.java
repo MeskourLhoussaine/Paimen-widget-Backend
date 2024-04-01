@@ -14,6 +14,10 @@ import ma.m2t.chaabipay.services.MerchantService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -117,28 +121,45 @@ public class MerchantImplement implements MerchantService {
     /******************************************************************************
      * ********************************************************************/
 
+
 @Override
-public void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds) {
+public void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementIds) throws Exception {
     // Récupérer le marchand
     Merchant merchant = merchantRepository.findById(marchandId)
-            .orElseThrow(() -> new RuntimeException("Marchand non trouvé"));
+            .orElseThrow(() -> new Exception("Marchand non trouvé"));
 
-    // Parcourir les IDs des méthodes de paiement
+    // Récupérer les associations existantes pour ce marchand
+    List<MarchandMethodePaiement> associationsExistants = marchandMethodePaiementRepository.findByMarchandId(marchandId);
+    Set<Long> idsMethodePaiementExistants = associationsExistants.stream()
+            .map(association -> association.getMethodePaiement().getId())
+            .collect(Collectors.toSet());
+
+    // Parcourir les IDs des méthodes de paiement choisis
     for (Long methodePaiementId : methodePaiementIds) {
-        // Récupérer la méthode de paiement
-        PaymentMethod methodePaiement = paimentMethodeReposirory.findById(methodePaiementId)
-                .orElseThrow(() -> new RuntimeException("Méthode de paiement non trouvée"));
+        if (!idsMethodePaiementExistants.contains(methodePaiementId)) {
+            // Récupérer la méthode de paiement depuis la base de données
+            PaymentMethod methodePaiement = paimentMethodeReposirory.findById(methodePaiementId)
+                    .orElseThrow(() -> new RuntimeException("Méthode de paiement non trouvée"));
 
-        // Créer une instance de l'entité associant le marchand et la méthode de paiement avec l'état par défaut false
-        MarchandMethodePaiement marchandMethodePaiement = new MarchandMethodePaiement();
-        marchandMethodePaiement.setMarchand(merchant);
-        marchandMethodePaiement.setMethodePaiement(methodePaiement);
-        marchandMethodePaiement.setEtat(false); // état par défaut
-
-        // Enregistrer l'association dans la base de données
-        marchandMethodePaiementRepository.save(marchandMethodePaiement);
+            // Créer une nouvelle association marchand-méthode de paiement
+            MarchandMethodePaiement association = new MarchandMethodePaiement();
+            association.setMarchand(merchant);
+            association.setMethodePaiement(methodePaiement);
+            association.setEtat(false); // état par défaut
+            marchandMethodePaiementRepository.save(association);
+        } else {
+            // Mettre à jour l'association existante si elle existe déjà
+            for (MarchandMethodePaiement associationExistante : associationsExistants) {
+                if (associationExistante.getMethodePaiement().getId().equals(methodePaiementId)) {
+                    associationExistante.setEtat(true); // Mettre à jour l'état à false
+                    marchandMethodePaiementRepository.save(associationExistante);
+                    break;
+                }
+            }
+        }
     }
 }
+
     /****************Méthode pour générer une clé secrète aléatoire**************************
      * ********************************************************************/
 
@@ -156,5 +177,33 @@ public void associerMethodesPaiement(Long marchandId, Set<Long> methodePaiementI
 
         // Convertir les bytes en une chaîne Base64 pour une représentation lisible
         return Base64.getEncoder().encodeToString(randomBytes);
+    }
+
+    //la fonction de hashage
+    @Override
+    public boolean checkAccessRights(String merchantHost, String sucretkey, String merchantName, String requestHMAC) {
+        try {
+            Optional<Merchant> optionalMerchant = merchantRepository.findByMerchantHost(merchantHost);
+            if (optionalMerchant.isPresent()) {
+                Merchant merchant = optionalMerchant.get();
+
+                if (merchant.getMerchantName().equals(merchantName) && merchant.getSucretkey().equals(sucretkey)) {
+                    String generatedHMAC = generateHMAC(merchantHost + merchantName, sucretkey);
+System.out.println(generatedHMAC);
+                    return generatedHMAC.equals(requestHMAC);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error while checking access rights for merchant: {}", e.getMessage());
+        }
+        return false;
+    }
+
+    private String generateHMAC(String data, String key) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+        hmacSHA256.init(secretKeySpec);
+        byte[] hmacBytes = hmacSHA256.doFinal(data.getBytes());
+        return Base64.getEncoder().encodeToString(hmacBytes);
     }
 }

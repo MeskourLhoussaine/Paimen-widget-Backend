@@ -1,13 +1,10 @@
 package ma.m2t.chaabipay.entites;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 @Entity
 @NoArgsConstructor
@@ -24,14 +21,7 @@ public class PaymentMethod {
     private String name;
     private String description;
     private String iconUrl;
+
     @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Transaction> transactions;
-/*
-    @JsonIgnore
-    @ManyToMany
-    private Set<Merchant> merchants = new HashSet<>();
-*/
-
-
 }
