@@ -16,17 +16,23 @@ import java.util.List;
 public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Long merchantId;
     private String merchantName;
     private String merchantDescrip;
     private String merchantHost; //le lien
-    private String merchantLogo;
+    private String merchantUrl; //logoUrl
     private String callback; //
     private String serviceid;
+    private String accessKey;
     private String sucretkey; //Doit etre crepty
 
-    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "merchant")
     @JsonIgnore // Ignorer cette propriété lors de la sérialisation JSON pour éviter les boucles infinies
     private List<Transaction> transactions;
+
+    @ManyToMany
+    @JoinTable(name = "merchant_paymentMethod",
+            joinColumns = @JoinColumn(name = "merchantId"),
+            inverseJoinColumns = @JoinColumn(name = "paymentMethodId"))
+    private List<PaymentMethod> paymentMethods;
 }

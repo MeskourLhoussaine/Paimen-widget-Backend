@@ -10,19 +10,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MarchandMethodePaiement {
+public class MerchantMethodePayment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "marchand_id")
-    private Merchant marchand;
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
 
     @ManyToOne
-    @JoinColumn(name = "methodepaiement_id")
-    private PaymentMethod methodePaiement;
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
-    private boolean etat;
+    private boolean status;
 
+    // Getters and setters
 }

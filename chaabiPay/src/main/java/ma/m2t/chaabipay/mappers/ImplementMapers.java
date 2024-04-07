@@ -1,11 +1,7 @@
 package ma.m2t.chaabipay.mappers;
 
-import ma.m2t.chaabipay.dtos.MerchantDTO;
-import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
-import ma.m2t.chaabipay.dtos.TransactionDTO;
-import ma.m2t.chaabipay.entites.Merchant;
-import ma.m2t.chaabipay.entites.PaymentMethod;
-import ma.m2t.chaabipay.entites.Transaction;
+import ma.m2t.chaabipay.dtos.*;
+import ma.m2t.chaabipay.entites.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +11,21 @@ public class ImplementMapers {
 
 
     //
-    public TransactionDTO fromTransaction(Transaction transaction){
-        TransactionDTO transactionDTO=new TransactionDTO();
-        BeanUtils.copyProperties(transaction,transactionDTO);
-        return  transactionDTO;
+    public TransactionDTO fromTransaction(Transaction transaction) {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        BeanUtils.copyProperties(transaction, transactionDTO);
+
+        // Set PaymentMethod and Merchant IDs if available
+        if (transaction.getPaymentMethod() != null) {
+            transactionDTO.setPaymentMethodId(transaction.getPaymentMethod().getPaymentMethodId());
+        }
+        if (transaction.getMerchant() != null) {
+            transactionDTO.setMerchantId(transaction.getMerchant().getMerchantId());
+        }
+
+        return transactionDTO;
     }
+
     public Transaction fromtransactionDTO(TransactionDTO transactionDTO){
         Transaction transaction=new Transaction();
         BeanUtils.copyProperties(transactionDTO,transaction);
@@ -45,10 +51,36 @@ public MerchantDTO fromMerchant(Merchant merchant){
         return  paimentMethodeDTO;
     }
 
-    public PaymentMethod PaimentMethodeDTO(PaimentMethodeDTO paimentMethodeDTO){
+    public PaymentMethod fromPaimentMethodeDTO(PaimentMethodeDTO paimentMethodeDTO){
         PaymentMethod paimentMethode = new PaymentMethod();
         BeanUtils.copyProperties(paimentMethodeDTO, paimentMethode);
         return  paimentMethode;
     }
 
+    /*#############################les classe fils #######################*/
+                                 /*###class Token #######*/
+    public TokenDTO fromToken(Token token){
+        TokenDTO tokenDTO = new TokenDTO();
+        BeanUtils.copyProperties(token, tokenDTO);
+        return  tokenDTO;
+    }
+
+    public Token fromTokenDTO(TokenDTO tokenDTO){
+        Token token = new Token();
+        BeanUtils.copyProperties(tokenDTO, token);
+        return  token;
+    }
+                                  /*###class CreditCard #######*/
+
+    public CreditCardDTO fromCreditCard(CreditCard creditCard){
+        CreditCardDTO creditCardDTO = new CreditCardDTO();
+        BeanUtils.copyProperties(creditCard, creditCardDTO);
+        return  creditCardDTO;
+    }
+
+    public CreditCard fromCreditCardDTO(CreditCardDTO creditCardDTO){
+        CreditCard creditCard = new CreditCard();
+        BeanUtils.copyProperties(creditCardDTO, creditCard);
+        return  creditCard;
+    }
 }

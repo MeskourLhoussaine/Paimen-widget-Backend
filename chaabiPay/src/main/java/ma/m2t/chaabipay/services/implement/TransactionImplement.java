@@ -1,35 +1,41 @@
 package ma.m2t.chaabipay.services.implement;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ma.m2t.chaabipay.dtos.MerchantDTO;
+import ma.m2t.chaabipay.dtos.CreditCardDTO;
+import ma.m2t.chaabipay.dtos.TokenDTO;
 import ma.m2t.chaabipay.dtos.TransactionDTO;
-import ma.m2t.chaabipay.entites.Merchant;
-import ma.m2t.chaabipay.entites.Transaction;
+import ma.m2t.chaabipay.entites.*;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.MerchantRepository;
+import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
 import ma.m2t.chaabipay.repositories.TransactionRepository;
+import ma.m2t.chaabipay.services.PaymentMethodService;
 import ma.m2t.chaabipay.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
 @Transactional
 @AllArgsConstructor
+@NoArgsConstructor
 @Slf4j
 public class TransactionImplement implements TransactionService {
-        private ImplementMapers dtoMapper;
-        @Autowired
-        private TransactionRepository transactionRepository;
 
+        private ImplementMapers dtoMapper;
+        private TransactionRepository transactionRepository;
+        private PaimentMethodeReposirory paymentMethodRepository;
+         private ImplementMapers implementMapers;
+          private MerchantRepository merchantRepository;
 
 
 
@@ -50,19 +56,23 @@ public class TransactionImplement implements TransactionService {
                 return transactionDTOs;
         }
 
-        @Override
-        public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
-                if (transactionDTO == null) {
-                        log.error("TransactionDTO is null. Cannot save null object.");
-                        throw new IllegalArgumentException("TransactionDTO cannot be null");
-                }
-                log.info("Saving new Merchant");
-                Transaction transaction = dtoMapper.fromtransactionDTO(transactionDTO);
-                // Utilisation de Optional pour éviter les NullPointerException
-                Optional<Transaction> savedTransaction = Optional.ofNullable(transactionRepository.save(transaction));
-                return savedTransaction.map(dtoMapper::fromTransaction)
-                        .orElseThrow(() -> new RuntimeException("Error while saving transaction"));
+    @Override
+    public TransactionDTO saveNewTransaction(TransactionDTO transactionDTO) {
+        Transaction transaction = dtoMapper.fromtransactionDTO(transactionDTO);
+
+        // Set PaymentMethod and Merchant if IDs are available
+        if (transactionDTO.getPaymentMethodId() != null) {
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(transactionDTO.getPaymentMethodId()).orElse(null);
+            transaction.setPaymentMethod(paymentMethod);
         }
+        if (transactionDTO.getMerchantId() != null) {
+            Merchant merchant = merchantRepository.findById(transactionDTO.getMerchantId()).orElse(null);
+            transaction.setMerchant(merchant);
+        }
+
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        return dtoMapper.fromTransaction(savedTransaction);
+    }
 
         @Override
         public TransactionDTO updateTransaction(TransactionDTO transactionDTO) {
@@ -73,7 +83,7 @@ public class TransactionImplement implements TransactionService {
                 log.info("Updating Transaction");
                 Transaction merchant = dtoMapper.fromtransactionDTO(transactionDTO);
                 // Utilisation de Optional pour gérer le cas où le marchand n'est pas trouvé
-                Optional<Transaction> updatedTransaction = transactionRepository.findById(merchant.getId());
+                Optional<Transaction> updatedTransaction = transactionRepository.findById(merchant.getTransactionId());
                 if (updatedTransaction.isPresent()) {
                         updatedTransaction = Optional.ofNullable(transactionRepository.save(merchant));
                 }
@@ -92,27 +102,6 @@ public class TransactionImplement implements TransactionService {
                 // Utilisation d'une lambda pour une suppression plus concise
                 transactionRepository.delete(transaction);
         }
-        /***####################### fonction de hachage ####################################*/
-        @Override
-        public String calculateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
-                String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;
-                return hmacDigest(data, secretKey, "HmacSHA1");
-        }
 
-        private String hmacDigest(String data, String key, String algorithm) {
-                try {
-                        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
-                        Mac mac = Mac.getInstance(algorithm);
-                        mac.init(secretKeySpec);
-                        byte[] bytes = mac.doFinal(data.getBytes());
-                        StringBuilder result = new StringBuilder();
-                        for (byte b : bytes) {
-                                result.append(String.format("%02x", b));
-                        }
-                        return result.toString();
-                } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-                        log.error("Error occurred while generating HMAC: {}", e.getMessage());
-                        throw new RuntimeException("Error occurred while generating HMAC", e);
-                }
-        }
+
 }

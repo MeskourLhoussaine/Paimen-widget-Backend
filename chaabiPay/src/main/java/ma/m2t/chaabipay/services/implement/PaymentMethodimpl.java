@@ -2,16 +2,16 @@ package ma.m2t.chaabipay.services.implement;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ma.m2t.chaabipay.dtos.MerchantDTO;
 import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
-import ma.m2t.chaabipay.entites.Merchant;
-import ma.m2t.chaabipay.entites.PaymentMethod;
+import ma.m2t.chaabipay.entites.*;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
+import ma.m2t.chaabipay.repositories.TransactionRepository;
 import ma.m2t.chaabipay.services.PaymentMethodService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,8 +22,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PaymentMethodimpl implements PaymentMethodService {
 
-private PaimentMethodeReposirory paimentMethodeReposirory;
-private ImplementMapers dtoMapper;
+
+    private TransactionRepository transactionRepository;
+
+
+    private PaimentMethodeReposirory paymentMethodRepository;
+
+
+    private PaimentMethodeReposirory paimentMethodeReposirory;
+    private ImplementMapers dtoMapper;
+
     @Override
     public List<PaimentMethodeDTO> listPaimentMethod() {
         List<PaymentMethod> paymentMethods = paimentMethodeReposirory.findAll();
@@ -48,7 +56,7 @@ private ImplementMapers dtoMapper;
             throw new IllegalArgumentException("PaimentMethodeDTO cannot be null");
         }
         log.info("Saving new Payment Method");
-       PaymentMethod paimentMethode = dtoMapper.PaimentMethodeDTO(paimentMethodeDTO);
+        PaymentMethod paimentMethode = dtoMapper.fromPaimentMethodeDTO(paimentMethodeDTO);
         // Utilisation de Optional pour éviter les NullPointerException
         Optional<PaymentMethod> savedPaimentMethode = Optional.ofNullable(paimentMethodeReposirory.save(paimentMethode));
         return savedPaimentMethode.map(dtoMapper::fromPaimentMethode)
@@ -65,4 +73,7 @@ private ImplementMapers dtoMapper;
     public void deletePaimenMethode(PaimentMethodeDTO paimentMethodeDTO) {
 
     }
+
+    /*#####################sevice */
+
 }

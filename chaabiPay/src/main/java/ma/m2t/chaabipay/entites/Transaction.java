@@ -1,27 +1,32 @@
 package ma.m2t.chaabipay.entites;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ma.m2t.chaabipay.entites.PaymentMethod;
+import ma.m2t.chaabipay.entites.Merchant;
+
 
 import java.util.Date;
 
-@Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter(AccessLevel.PUBLIC)
-@Setter(AccessLevel.PUBLIC)
+@Entity
 @Table(name = "transactions")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long transactionId;
 
-    private String orderId;// id commande
+    private String orderId;
     private double amount;
-    private String currency;// dh
+    private String currency;
     private String status;
-    private Date timestamp;
+
+   // @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private long timestamp;
 
     private String clientId;
     private String clientName;
@@ -29,11 +34,9 @@ public class Transaction {
     private String hmac;
     private String notif;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private PaymentMethod paymentMethod;
 
-    @ManyToOne
-    @JoinColumn(name = "merchant_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Merchant merchant;
 }
