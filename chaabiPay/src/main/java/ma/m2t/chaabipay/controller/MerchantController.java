@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -20,30 +21,33 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MerchantController {
-@Autowired
+    @Autowired
     private MerchantService merchantService;
-private MerchantMethodePaymentService merchantMethodePaymentService;
+    @Autowired
+    private MerchantMethodePaymentService merchantMethodePaymentService;
 
     @GetMapping("/findAll")
     public List<MerchantDTO> listMerchantes() {
         return merchantService.listMerchantes();
     }
-@PostMapping("/save")
-    public MerchantDTO saveMerchant( @RequestBody MerchantDTO MerchantDTO) {
+
+    @PostMapping("/save")
+    public MerchantDTO saveMerchant(@RequestBody MerchantDTO MerchantDTO) {
         return merchantService.saveMerchant(MerchantDTO);
     }
-@PutMapping("/update")
+
+    @PutMapping("/update")
     public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
         return merchantService.updateMerchant(merchantDTO);
     }
-@DeleteMapping("/delete")
+
+    @DeleteMapping("/delete")
     public void deleteMerchant(MerchantDTO merchantDTO) {
         merchantService.deleteMerchant(merchantDTO);
     }
 
 
-
-    @PostMapping("/generate-secret-key")
+    @PostMapping("/saveAndGenerate-secret-key")
     public String generateAndSaveSecretKey(@RequestBody MerchantDTO merchantDTO) {
         // Vérifier si les informations requises (nom et hôte du marchand) sont fournies
         if (merchantDTO.getMerchantName() == null || merchantDTO.getMerchantHost() == null) {
@@ -57,7 +61,7 @@ private MerchantMethodePaymentService merchantMethodePaymentService;
                 merchantDTO.getMerchantDescrip(), // Ajout de la description du marchand
                 merchantDTO.getMerchantLogo(),   // Ajout du logo du marchand
                 merchantDTO.getCallback(),       // Ajout du callback
-                merchantDTO.getServiceid()  ,
+                merchantDTO.getServiceid(),
                 merchantDTO.getAccessKey()// Ajout de l'ID du service
         );
     }
@@ -75,12 +79,13 @@ private MerchantMethodePaymentService merchantMethodePaymentService;
     }*/
 
     @PostMapping("/{merchantId}/affecterPaymentMethods")
-    public void associerMethodesPaiementToMerchant(@PathVariable Long marchandId, @RequestBody Set<Long> methodePaiementIds) throws MerchantExceptionNotFound {
-        merchantService.associerMethodesPaiementToMerchant(marchandId, methodePaiementIds);
+    public void associerMethodesPaiementToMerchant(@PathVariable Long merchantId, @RequestBody Set<Long> methodePaiementIds) throws MerchantExceptionNotFound {
+        merchantService.associerMethodesPaiementToMerchant(merchantId, methodePaiementIds);
     }
 
-    /**#########################Verifier les droit d'acces####################################*/
-
+    /**
+     * #########################Verifier les droit d'acces####################################
+     */
 
 
     @GetMapping("/permission")
@@ -106,17 +111,23 @@ private MerchantMethodePaymentService merchantMethodePaymentService;
 
         return hasPermission;
     }
+
     @GetMapping("/{id}")
-    public MerchantDTO getMerchantById(@PathVariable(name="id") Long merchantId) throws MerchantExceptionNotFound {
+    public MerchantDTO getMerchantById(@PathVariable(name = "id") Long merchantId) throws MerchantExceptionNotFound {
         return merchantService.getMerchantById(merchantId);
     }
 
-    public void deleteMerchantById(@PathVariable(name="id") Long merchantId) {
+    public void deleteMerchantById(@PathVariable(name = "id") Long merchantId) {
         merchantService.deleteMerchantById(merchantId);
     }
 /*
     public List<MerchantDTO> getAllMerchantsByMethod(Long methodId) {
         return merchantService.getAllMerchantsByMethod(methodId);
     }*/
-}
 
+    @GetMapping("/methods/{marchandId}")
+    public List<Map<String, Object>> getMarchandPaymentMethod(@PathVariable Long marchandId) throws MerchantExceptionNotFound {
+        return merchantMethodePaymentService.getMerchantPaymentMethod(marchandId);
+    }
+
+}

@@ -10,6 +10,7 @@ import ma.m2t.chaabipay.repositories.MerchantMethodePaymentRepository;
 import ma.m2t.chaabipay.repositories.MerchantRepository;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
 import ma.m2t.chaabipay.services.MerchantMethodePaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,8 +22,11 @@ import java.util.*;
 @NoArgsConstructor
 @CrossOrigin("*")
 public class MerchantMethodePaymentServiseImpl implements MerchantMethodePaymentService {
+    @Autowired
     private MerchantRepository merchantRepository;
+    @Autowired
     private MerchantMethodePaymentRepository merchantMethodePaymentRepository;
+    @Autowired
     private PaimentMethodeReposirory paimentMethodeReposirory;
 
     @Override
@@ -52,6 +56,13 @@ public class MerchantMethodePaymentServiseImpl implements MerchantMethodePayment
         }
         return paymentMethods;
     }
+
+
+    //Get/////////////////////
+
+
+
+///*******************************************************************************
 
 
     @Override

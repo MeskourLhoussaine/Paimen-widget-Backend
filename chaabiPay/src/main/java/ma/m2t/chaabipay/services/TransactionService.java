@@ -15,8 +15,17 @@ public interface TransactionService {
 
     TransactionDTO updateTransaction(TransactionDTO transactionDTO);
     void deleteTransaction(TransactionDTO transactionDTO);
+    void updateTransactionStatus(Long transactionId , String newStatus);
+    List<TransactionDTO> getAllTransactionsByMerchant(Long merchant);
+    List<TransactionDTO> getAllTransactionsByMethod(Long methodId);
+    //Ajouter la fonction  meskour #############
+    List<TransactionDTO> getTransactionsByPaymentMethodName(String  name);
+    //#############################
+
+    TransactionDTO getTransactionById(Long transactionId);
+    String getTransactionStatus(Long transactionID);
     //fonctin hashage
-
-
+//#############frontmarchand##############"
+    List<PaymentMethod> getPaimentMethodeBymerchanId(Long merchantId);
 
 }

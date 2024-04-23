@@ -11,6 +11,7 @@ import ma.m2t.chaabipay.repositories.CreditCardRepository;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
 import ma.m2t.chaabipay.repositories.TokenRepository;
 import ma.m2t.chaabipay.repositories.TransactionRepository;
+import ma.m2t.chaabipay.services.PaymentMethodService;
 import ma.m2t.chaabipay.services.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +36,13 @@ public class TransactionController {
     private TokenRepository tokenRepository;
 @Autowired
     private CreditCardRepository creditCardRepository;
+@Autowired
+private PaymentMethodService paymentMethodService;
 
 
 
 
-    @GetMapping("/fincAll")
+    @GetMapping("/findAll")
     public List<TransactionDTO> listTransactions() {
         return transactionService.listTransactions();
     }
@@ -59,28 +62,47 @@ public class TransactionController {
         transactionService.deleteTransaction(transactionDTO);
     }
 
-    /*#################create Transaction ################"*/
-/*
-    @PostMapping("/save")
-    public ResponseEntity<TransactionDTO> saveTransaction(@RequestBody TransactionDTO transactionDTO) {
-        // Assurez-vous que paymentMethodType et merchantId ne sont pas nuls
-        if (transactionDTO == null || transactionDTO.getPaymentMethodType() == null || transactionDTO.getMerchantId() == null) {
-            return ResponseEntity.badRequest().build();
-        }
 
-        // Enregistrez la transaction en utilisant votre service TransactionService
-        TransactionDTO savedTransaction = transactionService.saveTransaction(transactionDTO);
-
-        // Renvoyez une réponse contenant la transaction enregistrée
-        return ResponseEntity.ok(savedTransaction);
-    }
-
-*/
     @PostMapping("/save")
     public TransactionDTO saveNewTransaction(TransactionDTO transactionDTO) {
         return transactionService.saveNewTransaction(transactionDTO);
     }
+//UPDATE
 
 
+    @PutMapping("/changestatus/{transactionId}/{newstatus}")
+    public void updateTransactionStatus(@PathVariable Long transactionId,@PathVariable String newstatus) {
+        transactionService.updateTransactionStatus(transactionId,newstatus);
+    }
+
+    @GetMapping("/findByMerchantId/{marchandId}")
+    public List<TransactionDTO> getAllTransactionsByMerchant(@PathVariable Long marchandId) {
+        return transactionService.getAllTransactionsByMerchant(marchandId);
+    }
+
+    @GetMapping("/byPaymentMethod")
+    public List<TransactionDTO> getAllTransactionsByMethod(@RequestParam Long paymentmethod) {
+        return transactionService.getAllTransactionsByMethod(paymentmethod);
+    }
+
+    @GetMapping("/{transactionId}")
+    public TransactionDTO getTransactionById(@PathVariable Long transactionId) {
+        return transactionService.getTransactionById(transactionId);
+    }
+
+    @GetMapping("/status/{transactionId}")
+    public String getTransactionStatus(@PathVariable Long transactionId) {
+        return transactionService.getTransactionStatus(transactionId);
+    }
+    //ajouter cette fonction pour filtrer
+    @GetMapping("/BypymentMethothodName/{name}")
+    public List<TransactionDTO> getTransactionsByPaymentMethodName(@PathVariable  String name) {
+        return transactionService.getTransactionsByPaymentMethodName(name);
+    }
+    /* ------Front Marchand------Pour laoder le combobox par les name de pyment methode---*/
+    @GetMapping("/pymentMethodeBymerchanId/{merchantId}")
+    public List<PaymentMethod> getPaimentMethodeBymerchanId(@PathVariable Long merchantId) {
+        return transactionService.getPaimentMethodeBymerchanId(merchantId);
+    }
 }
 

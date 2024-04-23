@@ -15,7 +15,7 @@ public class TransactionDTO {
     private double amount;
     private String currency;
     private String status;
-    private Date timestamp;
+    private String timestamp;
     private String clientId;
     private String clientName;
     private String clientEmail;
@@ -28,17 +28,18 @@ public class TransactionDTO {
     }
 
     public TransactionDTO(Transaction transaction) {
-       this.transactionId = transaction.getTransactionId();
-        this.orderId = transaction.getOrderId();
-        this.amount = transaction.getAmount();
-        this.currency = transaction.getCurrency();
-        this.status = transaction.getStatus();
-        this.timestamp = new Date(transaction.getTimestamp());
+        this.transactionId = transaction.getTransactionId();
+        this.paymentMethodId = transaction.getPaymentMethod().getPaymentMethodId();
+        this.notif = transaction.getNotif();
+        this.hmac = transaction.getHmac();
+        this.clientEmail = transaction.getClientEmail();
         this.clientId = transaction.getClientId();
         this.clientName = transaction.getClientName();
-        this.clientEmail = transaction.getUserEmail();
-        this.hmac = transaction.getHmac();
-        this.notif = transaction.getNotif();
+        this.timestamp = transaction.getTimestamp();
+        this.status = transaction.getStatus();
+        this.currency = transaction.getCurrency();
+        this.amount = amount;
+        this.orderId = orderId;
         if (transaction.getPaymentMethod() != null) {
             this.paymentMethodId = transaction.getPaymentMethod().getPaymentMethodId();
         }

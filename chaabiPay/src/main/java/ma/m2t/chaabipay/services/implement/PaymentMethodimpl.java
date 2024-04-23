@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.entites.*;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
+import ma.m2t.chaabipay.repositories.MerchantRepository;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
 import ma.m2t.chaabipay.repositories.TransactionRepository;
 import ma.m2t.chaabipay.services.PaymentMethodService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,8 @@ public class PaymentMethodimpl implements PaymentMethodService {
 
 
     private TransactionRepository transactionRepository;
-
+@Autowired
+    private MerchantRepository merchantRepository;
 
     private PaimentMethodeReposirory paymentMethodRepository;
 
@@ -73,6 +76,9 @@ public class PaymentMethodimpl implements PaymentMethodService {
     public void deletePaimenMethode(PaimentMethodeDTO paimentMethodeDTO) {
 
     }
+
+    //########meskour getgetPaimentMethodeBymerchanId############23/04/2024 merchantdasboard
+
 
     /*#####################sevice */
 

@@ -1,5 +1,6 @@
 package ma.m2t.chaabipay.entites;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "transactions")
+
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +28,15 @@ public class Transaction {
     private String status;
 
    // @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private long timestamp;
+    private String timestamp;
 
     private String clientId;
     private String clientName;
-    private String userEmail;
+    private String clientEmail;
     private String hmac;
     private String notif;
 
+    
     @ManyToOne(fetch = FetchType.LAZY)
     private PaymentMethod paymentMethod;
 

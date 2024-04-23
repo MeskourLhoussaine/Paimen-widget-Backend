@@ -10,8 +10,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter(AccessLevel.PUBLIC)
-@Setter(AccessLevel.PUBLIC)
+@Data
 @Table(name = "merchants")
 public class Merchant {
     @Id
@@ -27,7 +26,7 @@ public class Merchant {
     private String sucretkey; //Doit etre crepty
 
     @OneToMany(mappedBy = "merchant")
-    @JsonIgnore // Ignorer cette propriété lors de la sérialisation JSON pour éviter les boucles infinies
+    // Ignorer cette propriété lors de la sérialisation JSON pour éviter les boucles infinies
     private List<Transaction> transactions;
 
     @ManyToMany

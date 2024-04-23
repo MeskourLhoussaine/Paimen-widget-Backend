@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "marchand_methodepaiement")
+@Table(name = "merchant_paymentmethod")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -16,11 +16,11 @@ public class MerchantMethodePayment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "merchant_id")
+    @JoinColumn(name = "merchantId")
     private Merchant merchant;
 
     @ManyToOne
-    @JoinColumn(name = "payment_method_id")
+    @JoinColumn(name = "paymentMethodId")
     private PaymentMethod paymentMethod;
 
     private boolean status;
