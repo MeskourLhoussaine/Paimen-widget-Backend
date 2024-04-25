@@ -2,8 +2,10 @@ package ma.m2t.chaabipay.services.implement;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.m2t.chaabipay.dtos.MerchantDTO;
 import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.entites.*;
+import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.MerchantRepository;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
@@ -29,9 +31,9 @@ public class PaymentMethodimpl implements PaymentMethodService {
 @Autowired
     private MerchantRepository merchantRepository;
 
-    private PaimentMethodeReposirory paymentMethodRepository;
 
 
+@Autowired
     private PaimentMethodeReposirory paimentMethodeReposirory;
     private ImplementMapers dtoMapper;
 
@@ -76,6 +78,17 @@ public class PaymentMethodimpl implements PaymentMethodService {
     public void deletePaimenMethode(PaimentMethodeDTO paimentMethodeDTO) {
 
     }
+/*****utiliser dans front****/
+    @Override
+    public PaimentMethodeDTO getPymentMethodeById(Long paymentMethodId) {
+        PaymentMethod paymentMethod = paimentMethodeReposirory.findById(paymentMethodId).orElse(null);
+        if(paymentMethod == null) {
+            // Gérer le cas où aucun mode de paiement avec cet identifiant n'est trouvé
+            return null; // Ou vous pouvez lancer une exception appropriée
+        }
+        return dtoMapper.fromPaimentMethode(paymentMethod);
+    }
+
 
     //########meskour getgetPaimentMethodeBymerchanId############23/04/2024 merchantdasboard
 

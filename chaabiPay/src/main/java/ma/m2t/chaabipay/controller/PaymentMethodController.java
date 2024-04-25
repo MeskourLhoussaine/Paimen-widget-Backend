@@ -33,5 +33,9 @@ public class PaymentMethodController {
     public List<PaimentMethodeDTO> listPaimentMethod() {
         return paymentMethodService.listPaimentMethod();
     }
-
+    /*utiliser pour front Merchant (details) Transaction*/
+    @GetMapping("/findById/{paymentMethodId}")
+    public PaimentMethodeDTO getPymentMethodeById(@PathVariable Long paymentMethodId) {
+        return paymentMethodService.getPymentMethodeById(paymentMethodId);
+    }
 }

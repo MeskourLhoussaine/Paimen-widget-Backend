@@ -59,24 +59,14 @@ public class MerchantController {
                 merchantDTO.getMerchantName(),
                 merchantDTO.getMerchantHost(),
                 merchantDTO.getMerchantDescrip(), // Ajout de la description du marchand
-                merchantDTO.getMerchantLogo(),   // Ajout du logo du marchand
+                merchantDTO.getMerchantUrl(),   // Ajout du logo du marchand
                 merchantDTO.getCallback(),       // Ajout du callback
                 merchantDTO.getServiceid(),
                 merchantDTO.getAccessKey()// Ajout de l'ID du service
         );
     }
 
-   /* @PostMapping("/associer-methodes-paiement")
-    public ResponseEntity<String> associerMethodesPaiementToMerchant(@RequestParam("marchandId") Long marchandId,
-                                                           @RequestBody Set<Long> methodePaiementIds) {
-        try {
-            merchantService.associerMethodesPaiementToMerchant(marchandId, methodePaiementIds);
-            return ResponseEntity.ok("Associations des méthodes de paiement effectuées avec succès.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Une erreur est survenue lors de l'association des méthodes de paiement : " + e.getMessage());
-        }
-    }*/
+
 
     @PostMapping("/{merchantId}/affecterPaymentMethods")
     public void associerMethodesPaiementToMerchant(@PathVariable Long merchantId, @RequestBody Set<Long> methodePaiementIds) throws MerchantExceptionNotFound {
@@ -112,7 +102,7 @@ public class MerchantController {
         return hasPermission;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/findById/{id}")
     public MerchantDTO getMerchantById(@PathVariable(name = "id") Long merchantId) throws MerchantExceptionNotFound {
         return merchantService.getMerchantById(merchantId);
     }

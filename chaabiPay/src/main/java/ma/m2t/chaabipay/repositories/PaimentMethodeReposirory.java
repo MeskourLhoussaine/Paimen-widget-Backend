@@ -11,4 +11,5 @@ public interface PaimentMethodeReposirory extends JpaRepository<PaymentMethod,Lo
     //ajouter la methode suivante Meskour utiliser pour faire filtrer les transaction par methode pyment
     Optional<PaymentMethod> findByName(String name);
 
+
 }

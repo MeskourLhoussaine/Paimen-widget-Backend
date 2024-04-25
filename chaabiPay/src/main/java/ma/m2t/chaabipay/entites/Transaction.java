@@ -36,7 +36,7 @@ public class Transaction {
     private String hmac;
     private String notif;
 
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     private PaymentMethod paymentMethod;
 
