@@ -83,4 +83,16 @@ public MerchantDTO fromMerchant(Merchant merchant){
         BeanUtils.copyProperties(creditCardDTO, creditCard);
         return  creditCard;
     }
+//Demande
+    public DemandeDTO fromDemande(Demande demande){
+        DemandeDTO demandeDTO =new DemandeDTO();
+        BeanUtils.copyProperties(demande, demandeDTO);
+        return demandeDTO;
+    }
+
+    public Demande fromDemandeDTO(DemandeDTO demandeDTO){
+        Demande demande =new Demande();
+        BeanUtils.copyProperties(demandeDTO, demande);
+        return demande;
+    }
 }

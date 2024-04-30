@@ -3,6 +3,7 @@ package ma.m2t.chaabipay.services.implement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.m2t.chaabipay.dtos.MerchantDTO;
+import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.entites.MerchantMethodePayment;
 import ma.m2t.chaabipay.entites.Merchant;
 import ma.m2t.chaabipay.entites.PaymentMethod;
@@ -63,16 +64,14 @@ public class MerchantImplement implements MerchantService {
 
     @Override
     public MerchantDTO saveMerchant(MerchantDTO merchantDTO) {
-        if (merchantDTO == null) {
-            log.error("MerchantDTO is null. Cannot save null object.");
-            throw new IllegalArgumentException("MerchantDTO cannot be null");
-        }
-        log.info("Saving new Merchant");
-        Merchant merchant = dtoMapper.fromMerchantDTO(merchantDTO);
-        // Utilisation de Optional pour éviter les NullPointerException
-        Optional<Merchant> savedMerchant = Optional.ofNullable(merchantRepository.save(merchant));
-        return savedMerchant.map(dtoMapper::fromMerchant)
-                .orElseThrow(() -> new RuntimeException("Error while saving merchant"));
+        Merchant marchand = dtoMapper.fromMerchantDTO(merchantDTO);
+
+        String secretKey = generateSecretKey();
+        marchand.setSucretkey(secretKey);
+
+        Merchant savedMarchand = merchantRepository.save(marchand);
+
+        return dtoMapper.fromMerchant(savedMarchand);
     }
 
     @Override
@@ -109,6 +108,7 @@ public class MerchantImplement implements MerchantService {
 
     }
 
+
     @Override
     public MerchantDTO getMerchantById(Long merchantId) throws MerchantExceptionNotFound{
         Merchant merchant = merchantRepository.findById(merchantId)
@@ -125,7 +125,7 @@ public class MerchantImplement implements MerchantService {
      * ********************************************************************/
 
     @Override
-    public String generateAndSaveSecretKey(String merchantName, String merchantHost, String merchantDescrip, String merchantLogo, String callback,String accessKey, String serviceid) {
+    public String generateAndSaveSecretKey(String merchantName, String merchantHost, String merchantDescrip, String merchantLogo, String callback,String accessKey, String serviceid ) {
         // Générer une clé secrète aléatoire
         String secretKey = generateSecretKey();
 
@@ -139,6 +139,7 @@ public class MerchantImplement implements MerchantService {
         merchant.setServiceid(serviceid);
         merchant.setSucretkey(secretKey);
         merchant.setAccessKey(accessKey);// Attention à la faute de frappe dans le nom du setter
+       // merchant.getMarchandPhone(marchandPhone);
 
         // Enregistrer le marchand dans la base de données
         merchantRepository.save(merchant);
@@ -268,5 +269,7 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
             throw new RuntimeException(e);
         }
     }
+
+
 
 }

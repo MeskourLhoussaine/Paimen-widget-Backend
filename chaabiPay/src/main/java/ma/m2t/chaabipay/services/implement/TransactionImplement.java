@@ -4,10 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.dtos.TransactionDTO;
 import ma.m2t.chaabipay.entites.Merchant;
 import ma.m2t.chaabipay.entites.PaymentMethod;
 import ma.m2t.chaabipay.entites.Transaction;
+import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.MerchantRepository;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,8 @@ public class TransactionImplement implements TransactionService {
 
     @Autowired
     private MerchantRepository merchantRepository;
+
+    private TransactionService transactionService;
 
     @Override
     public List<TransactionDTO> listTransactions() {
@@ -228,4 +233,7 @@ public class TransactionImplement implements TransactionService {
             throw new IllegalArgumentException("No payment methods found for merchant");
         }
     }
+
+
+
 }
