@@ -24,7 +24,7 @@ public interface TransactionService {
 
     TransactionDTO getTransactionById(Long transactionId);
     String getTransactionStatus(Long transactionID);
-    //fonctin hashage
+    //fonctin hashag
 //#############frontmarchand##############"
     List<PaymentMethod> getPaimentMethodeBymerchanId(Long merchantId);
 
