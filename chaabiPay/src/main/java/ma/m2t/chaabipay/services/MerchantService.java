@@ -16,7 +16,7 @@ void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> methodePaieme
 
                        //##############GET###################
     List<MerchantDTO> listMerchantes();
-    MerchantDTO getMerchantById(Long merchantId) throws MerchantExceptionNotFound;
+    MerchantDTO findMerchantById(Long id) throws MerchantExceptionNotFound;
     List<MerchantDTO> getAllMerchantsByMethod(Long methodId);
 
     //verifier les permission

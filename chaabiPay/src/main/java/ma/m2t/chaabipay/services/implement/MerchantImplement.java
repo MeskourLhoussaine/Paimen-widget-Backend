@@ -1,5 +1,6 @@
 package ma.m2t.chaabipay.services.implement;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.m2t.chaabipay.dtos.MerchantDTO;
@@ -51,13 +52,7 @@ public class MerchantImplement implements MerchantService {
         List<MerchantDTO> merchantDTOS = merchants.stream()
                 .map(merchant -> dtoMapper.fromMerchant(merchant))
                 .collect(Collectors.toList());
-    /*
-    List<MerchantDTO> merchantDTOS = new ArrayList<>();
-    for (Merchant merchant : merchants) {
-        MerchantDTO merchantDTO = dtoMapper.fromMerchant(merchant);
-        merchantDTOS.add(merchantDTO);
-    }
-    */
+
         return merchantDTOS;
     }
 
@@ -73,23 +68,34 @@ public class MerchantImplement implements MerchantService {
 
         return dtoMapper.fromMerchant(savedMarchand);
     }
+//update
+@Override
+public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
+    // Récupérer le marchand existant par son ID
+    Merchant existingMarchand = merchantRepository.findById(merchantDTO.getMerchantId())
+            .orElseThrow(() -> new EntityNotFoundException("Merchant not found"));
 
-    @Override
-    public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
-        if (merchantDTO == null) {
-            log.error("MerchantDTO is null. Cannot update null object.");
-            throw new IllegalArgumentException("MerchantDTO cannot be null");
-        }
-        log.info("Updating Merchant");
-        Merchant merchant = dtoMapper.fromMerchantDTO(merchantDTO);
-        // Utilisation de Optional pour gérer le cas où le marchand n'est pas trouvé
-        Optional<Merchant> updatedMerchant = merchantRepository.findById(merchant.getMerchantId());
-        if (updatedMerchant.isPresent()) {
-            updatedMerchant = Optional.ofNullable(merchantRepository.save(merchant));
-        }
-        return updatedMerchant.map(dtoMapper::fromMerchant)
-                .orElseThrow(() -> new RuntimeException("Merchant not found"));
-    }
+    // Mettre à jour tous les attributs du marchand avec les valeurs du DTO passé en paramètre
+    existingMarchand.setMerchantName(merchantDTO.getMerchantName());
+    existingMarchand.setMerchantDescrip(merchantDTO.getMerchantDescrip());
+    existingMarchand.setMerchantHost(merchantDTO.getMerchantHost());
+    existingMarchand.setMerchantUrl(merchantDTO.getMerchantUrl());
+    existingMarchand.setMarchandPhone(merchantDTO.getMarchandPhone());
+    existingMarchand.setMarchandEmail(merchantDTO.getMarchandEmail());
+    existingMarchand.setMarchandStatus(merchantDTO.getMarchandStatus());
+
+    existingMarchand.setMarchandRcIf(merchantDTO.getMarchandRcIf());
+    existingMarchand.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
+    existingMarchand.setMarchandDgName(merchantDTO.getMarchandDgName());
+
+
+    // Enregistrer la mise à jour du marchand dans la base de données
+    Merchant updatedMarchand = merchantRepository.save(existingMarchand);
+
+    // Mapper l'entité mise à jour vers le DTO et le retourner
+    return dtoMapper.fromMerchant(updatedMarchand);
+}
+
 
     @Override
     public void deleteMerchant(MerchantDTO merchantDTO) {
@@ -110,10 +116,13 @@ public class MerchantImplement implements MerchantService {
 
 
     @Override
-    public MerchantDTO getMerchantById(Long merchantId) throws MerchantExceptionNotFound{
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new MerchantExceptionNotFound("Merchant Not found"));
-        return dtoMapper.fromMerchant(merchant);
+    public MerchantDTO findMerchantById(Long id) {
+        Optional<Merchant> optionalMerchant = merchantRepository.findById(id);
+        if (optionalMerchant.isPresent()) {
+            return dtoMapper.fromMerchant(optionalMerchant.get());
+        } else {
+            throw new EntityNotFoundException("Merchant not found with ID: " + id);
+        }
     }
 
     @Override
@@ -242,6 +251,8 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
         return false;
     }
 
+
+
     public String generateHmac(String merchantId, String orderId, double amount, String currency, String secretKey) {
         String data = merchantId + ':' + orderId + ':' + amount + ':' + currency;
         return hmacDigest(data, secretKey);
@@ -269,6 +280,7 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
             throw new RuntimeException(e);
         }
     }
+
 
 
 

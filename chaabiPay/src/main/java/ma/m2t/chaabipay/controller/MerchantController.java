@@ -36,10 +36,33 @@ public class MerchantController {
         return merchantService.saveMerchant(MerchantDTO);
     }
 
-    @PutMapping("/update")
-    public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
-        return merchantService.updateMerchant(merchantDTO);
+    @PutMapping("/updateMarchand/{id}")
+    public MerchantDTO updateMerchant(@PathVariable Long id, @RequestBody MerchantDTO merchantDTO) throws MerchantExceptionNotFound {
+        // Récupérer le marchand existant par son ID
+        MerchantDTO existingMerchantDTO = merchantService.findMerchantById(id);
+
+        // Vérifier si le marchand existe
+        if (existingMerchantDTO != null) {
+            // Mettre à jour chaque attribut du marchand existant avec les valeurs du DTO passé en paramètre
+            existingMerchantDTO.setMerchantName(merchantDTO.getMerchantName());
+            existingMerchantDTO.setMerchantDescrip(merchantDTO.getMerchantDescrip());
+            existingMerchantDTO.setMerchantHost(merchantDTO.getMerchantHost());
+            existingMerchantDTO.setMerchantUrl(merchantDTO.getMerchantUrl());
+            existingMerchantDTO.setMarchandPhone(merchantDTO.getMarchandPhone());
+            existingMerchantDTO.setMarchandEmail(merchantDTO.getMarchandEmail());
+            existingMerchantDTO.setMarchandRcIf(merchantDTO.getMarchandRcIf());
+            existingMerchantDTO.setMarchandStatus(merchantDTO.getMarchandStatus());
+            existingMerchantDTO.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
+            existingMerchantDTO.setMarchandDgName(merchantDTO.getMarchandDgName());
+
+
+            // Appeler le service pour mettre à jour le marchand
+            return merchantService.updateMerchant(existingMerchantDTO);
+        } else {
+            throw new MerchantExceptionNotFound("Merchant not found with ID: " + id);
+        }
     }
+
 
     @DeleteMapping("/delete")
     public void deleteMerchant(MerchantDTO merchantDTO) {
@@ -104,7 +127,7 @@ public class MerchantController {
 
     @GetMapping("/findById/{id}")
     public MerchantDTO getMerchantById(@PathVariable(name = "id") Long merchantId) throws MerchantExceptionNotFound {
-        return merchantService.getMerchantById(merchantId);
+        return merchantService.findMerchantById(merchantId);
     }
 
     public void deleteMerchantById(@PathVariable(name = "id") Long merchantId) {
