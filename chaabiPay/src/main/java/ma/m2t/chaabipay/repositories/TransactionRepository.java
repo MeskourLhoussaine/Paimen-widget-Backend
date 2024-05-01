@@ -12,4 +12,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     List<Transaction> findAllByMerchant(Optional<Merchant> merchant);
 
     List<Transaction> findAllByPaymentMethod(Optional<PaymentMethod> paymentMethod);
+
+
 }

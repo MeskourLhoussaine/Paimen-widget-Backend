@@ -46,7 +46,7 @@ public class TransactionImplement implements TransactionService {
 
     @Autowired
     private MerchantRepository merchantRepository;
-
+@Autowired
     private TransactionService transactionService;
 
     @Override
@@ -233,6 +233,27 @@ public class TransactionImplement implements TransactionService {
             throw new IllegalArgumentException("No payment methods found for merchant");
         }
     }
+
+
+//using for countin numbre of transaction by name client
+@Override
+public int getNumberOfTransactionsByClientAndMerchant(String clientName, Long merchantId) {
+    // Check if clientName and merchantId are not null
+    if (clientName == null || merchantId == null) {
+        throw new IllegalArgumentException("Client name and merchant ID cannot be null");
+    }
+
+    // Retrieve the list of transactions for the given merchant
+    List<TransactionDTO> transactions = transactionService.getAllTransactionsByMerchant(merchantId);
+
+    // Count the number of transactions for the specified client
+    long transactionCount = transactions.stream()
+            .filter(transaction -> clientName.equals(transaction.getClientName()))
+            .count();
+
+    // Convert the count to an integer
+    return (int) transactionCount;
+}
 
 
 
