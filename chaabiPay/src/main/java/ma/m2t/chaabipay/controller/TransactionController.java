@@ -104,5 +104,10 @@ private PaymentMethodService paymentMethodService;
     public List<PaymentMethod> getPaimentMethodeBymerchanId(@PathVariable Long merchantId) {
         return transactionService.getPaimentMethodeBymerchanId(merchantId);
     }
+    //using for countin numbre of transaction by name client
+    @GetMapping("/NumberOfTransactionsByClientAndMerchant/{merchantId}/{clientName}")
+    public int getNumberOfTransactionsByClientAndMerchant(@PathVariable Long merchantId, @PathVariable String clientName) {
+        return transactionService.getNumberOfTransactionsByClientAndMerchant(clientName, merchantId);
+    }
 }
 
