@@ -29,7 +29,7 @@ public interface TransactionService {
     List<PaymentMethod> getPaimentMethodeBymerchanId(Long merchantId);
 
     //30/04
-    // Méthode pour récupérer le nombre de transactions effectuées par un client chez un marchand donné
+    // Méthode pour récupérer le nombre de transactions effectuées par un client chez un marchand donné ##
     int getNumberOfTransactionsByClientAndMerchant(String clientName, Long merchantId);
 
 }

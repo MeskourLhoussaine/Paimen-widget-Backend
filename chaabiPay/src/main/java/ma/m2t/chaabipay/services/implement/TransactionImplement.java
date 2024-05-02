@@ -235,7 +235,7 @@ public class TransactionImplement implements TransactionService {
     }
 
 
-//using for countin numbre of transaction by name client
+//using for countin numbre of transactions by name client
 @Override
 public int getNumberOfTransactionsByClientAndMerchant(String clientName, Long merchantId) {
     // Check if clientName and merchantId are not null
