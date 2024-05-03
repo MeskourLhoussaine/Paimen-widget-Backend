@@ -45,7 +45,8 @@ public class MerchantImplement implements MerchantService {
 
     }
 
-
+    /************----< get ALL Marchant >-----*******************/
+                             /**--#-- */
     @Override
     public List<MerchantDTO> listMerchantes() {
         List<Merchant> merchants = merchantRepository.findAll();
@@ -55,8 +56,8 @@ public class MerchantImplement implements MerchantService {
 
         return merchantDTOS;
     }
-
-
+    /*******----< Méthode pour Ajouter le marchand avec un cle secret encrypter >-----**********/
+                                  /**--#-- */
     @Override
     public MerchantDTO saveMerchant(MerchantDTO merchantDTO) {
         Merchant marchand = dtoMapper.fromMerchantDTO(merchantDTO);
@@ -68,7 +69,9 @@ public class MerchantImplement implements MerchantService {
 
         return dtoMapper.fromMerchant(savedMarchand);
     }
-//update
+
+    /************----< Méthode pour Modifier le marchand >-----*******************/
+                                   /**--#-- */
 @Override
 public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
     // Récupérer le marchand existant par son ID
@@ -82,16 +85,12 @@ public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
     existingMarchand.setMerchantUrl(merchantDTO.getMerchantUrl());
     existingMarchand.setMarchandPhone(merchantDTO.getMarchandPhone());
     existingMarchand.setMarchandEmail(merchantDTO.getMarchandEmail());
-    existingMarchand.setMarchandStatus(merchantDTO.getMarchandStatus());
-
     existingMarchand.setMarchandRcIf(merchantDTO.getMarchandRcIf());
     existingMarchand.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
     existingMarchand.setMarchandDgName(merchantDTO.getMarchandDgName());
 
-
     // Enregistrer la mise à jour du marchand dans la base de données
     Merchant updatedMarchand = merchantRepository.save(existingMarchand);
-
     // Mapper l'entité mise à jour vers le DTO et le retourner
     return dtoMapper.fromMerchant(updatedMarchand);
 }
@@ -130,9 +129,9 @@ public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
         return null;
     }
 
+
     /******************************************************************************
      * ********************************************************************/
-
     @Override
     public String generateAndSaveSecretKey(String merchantName, String merchantHost, String merchantDescrip, String merchantLogo, String callback,String accessKey, String serviceid ) {
         // Générer une clé secrète aléatoire

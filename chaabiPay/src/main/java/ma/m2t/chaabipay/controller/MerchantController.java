@@ -25,17 +25,22 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantMethodePaymentService merchantMethodePaymentService;
-
+    /****************----< find All  Merchant Api >----**************/
+                                   /**--#-- */
     @GetMapping("/findAll")
     public List<MerchantDTO> listMerchantes() {
         return merchantService.listMerchantes();
     }
 
+    /******************----< Add Merchant Api avaec la generate de secret key  >----***********/
+                                         /**--#-- */
     @PostMapping("/save")
     public MerchantDTO saveMerchant(@RequestBody MerchantDTO MerchantDTO) {
         return merchantService.saveMerchant(MerchantDTO);
     }
 
+            /******************----< update Merchant Api >----*********************/
+                                          /**--#-- */
     @PutMapping("/updateMarchand/{id}")
     public MerchantDTO updateMerchant(@PathVariable Long id, @RequestBody MerchantDTO merchantDTO) throws MerchantExceptionNotFound {
         // Récupérer le marchand existant par son ID
@@ -51,10 +56,8 @@ public class MerchantController {
             existingMerchantDTO.setMarchandPhone(merchantDTO.getMarchandPhone());
             existingMerchantDTO.setMarchandEmail(merchantDTO.getMarchandEmail());
             existingMerchantDTO.setMarchandRcIf(merchantDTO.getMarchandRcIf());
-            existingMerchantDTO.setMarchandStatus(merchantDTO.getMarchandStatus());
             existingMerchantDTO.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
             existingMerchantDTO.setMarchandDgName(merchantDTO.getMarchandDgName());
-
 
             // Appeler le service pour mettre à jour le marchand
             return merchantService.updateMerchant(existingMerchantDTO);
@@ -63,13 +66,16 @@ public class MerchantController {
         }
     }
 
-
+    /*****************----< delete Merchant Api >----************************/
+                                 /**--#-- */
     @DeleteMapping("/delete")
     public void deleteMerchant(MerchantDTO merchantDTO) {
         merchantService.deleteMerchant(merchantDTO);
+
     }
 
-
+    /*********----< Add Merchant Api fait la meme chose que  saveMerchant  >----*******/
+                                 /**--#-- */
     @PostMapping("/saveAndGenerate-secret-key")
     public String generateAndSaveSecretKey(@RequestBody MerchantDTO merchantDTO) {
         // Vérifier si les informations requises (nom et hôte du marchand) sont fournies
@@ -89,17 +95,16 @@ public class MerchantController {
         );
     }
 
-
+    /**--< doner au marchand des methods avec le status True par default (en peut modifier a false par default )  >-*****/
+                                 /**--#-- */
 
     @PostMapping("/{merchantId}/affecterPaymentMethods")
     public void associerMethodesPaiementToMerchant(@PathVariable Long merchantId, @RequestBody Set<Long> methodePaiementIds) throws MerchantExceptionNotFound {
         merchantService.associerMethodesPaiementToMerchant(merchantId, methodePaiementIds);
     }
 
-    /**
-     * #########################Verifier les droit d'acces####################################
-     */
-
+    /*****************----< Verifier les droit d'acces >----************************/
+                                  /**--#-- */
 
     @GetMapping("/permission")
     public Boolean testPermission(
@@ -124,12 +129,14 @@ public class MerchantController {
 
         return hasPermission;
     }
-
+    /*****************----< find Merchant by Id >----************************/
+                                    /**--#-- */
     @GetMapping("/findById/{id}")
     public MerchantDTO getMerchantById(@PathVariable(name = "id") Long merchantId) throws MerchantExceptionNotFound {
         return merchantService.findMerchantById(merchantId);
     }
-
+    /*****************----< delete Merchant by Id >----************************/
+                             /**--#-- */
     public void deleteMerchantById(@PathVariable(name = "id") Long merchantId) {
         merchantService.deleteMerchantById(merchantId);
     }
@@ -137,7 +144,8 @@ public class MerchantController {
     public List<MerchantDTO> getAllMerchantsByMethod(Long methodId) {
         return merchantService.getAllMerchantsByMethod(methodId);
     }*/
-
+    /*****************----< GET All methods using by merchant Id >----************************/
+                                    /**--#-- */
     @GetMapping("/methods/{marchandId}")
     public List<Map<String, Object>> getMarchandPaymentMethod(@PathVariable Long marchandId) throws MerchantExceptionNotFound {
         return merchantMethodePaymentService.getMerchantPaymentMethod(marchandId);
