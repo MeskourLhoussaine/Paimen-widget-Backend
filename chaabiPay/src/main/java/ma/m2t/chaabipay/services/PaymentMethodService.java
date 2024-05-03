@@ -16,8 +16,10 @@ public interface PaymentMethodService {
     PaimentMethodeDTO updatePaimenMethode(PaimentMethodeDTO paimentMethodeDTO);
     void deletePaimenMethode(PaimentMethodeDTO paimentMethodeDTO);
 
-//############meskour###########"
+           //############meskour###########"
 
     PaimentMethodeDTO getPymentMethodeById(Long paymentMethodId) ;
+
+
 
 }
