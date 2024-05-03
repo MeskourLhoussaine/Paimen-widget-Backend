@@ -39,7 +39,7 @@ public class MerchantController {
         return merchantService.saveMerchant(MerchantDTO);
     }
 
-            /*****************----< update Merchant Api >----*********************/
+            /******************----< update Merchant Api >----*********************/
                                           /**--#-- */
     @PutMapping("/updateMarchand/{id}")
     public MerchantDTO updateMerchant(@PathVariable Long id, @RequestBody MerchantDTO merchantDTO) throws MerchantExceptionNotFound {
