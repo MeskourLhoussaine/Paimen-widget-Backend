@@ -57,11 +57,6 @@ public class MerchantMethodePaymentServiseImpl implements MerchantMethodePayment
         return paymentMethods;
     }
 
-
-    //Get/////////////////////
-
-
-
 ///*******************************************************************************
 
 
@@ -87,8 +82,48 @@ public class MerchantMethodePaymentServiseImpl implements MerchantMethodePayment
             existingAssociation.setStatus(!existingAssociation.isStatus());
             merchantMethodePaymentRepository.save(existingAssociation);
         }
-
-        //
         System.out.println("Payment method " + paymentMethod.getName() + " for merchant " + merchant.getMerchantName() + " is now " + (existingAssociation != null && existingAssociation.isStatus() ? "selected" : "deselected"));
     }
+
+
+    /**********----< get status de la methode affectue au merchant >----*******/
+                               /**--#-- */
+    @Override
+    public boolean findStatusMerchantPaymentByMerchantIdAndPaymentMethodId(Long merchantId, Long paymentMethodId) {
+        MerchantMethodePayment existingAssociation = merchantMethodePaymentRepository.findByMerchantMerchantIdAndPaymentMethodPaymentMethodId(merchantId, paymentMethodId);
+
+        if (existingAssociation != null) {
+            // Si une association existe pour le marchand et la méthode de paiement donnés,
+            // retourne l'état de l'association
+            return existingAssociation.isStatus();
+        }
+
+        return false; // Si aucune association n'est trouvée, retourne false
+    }
+
+           /**********----------< update status >---------- ****************/
+    @Override
+    public void updateMerchantMethodStatusByPaymentMethodId(Long paymentMethodId, Long merchantId, boolean status) throws MerchantExceptionNotFound {
+        // Récupérer le mode de paiement correspondant à l'ID donné
+        PaymentMethod paymentMethod = paimentMethodeReposirory.findById(paymentMethodId)
+                .orElseThrow(() -> new MerchantExceptionNotFound("Payment Method not found with ID: " + paymentMethodId));
+
+        // Récupérer le marchand correspondant à l'ID donné
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new MerchantExceptionNotFound("Merchant not found with ID: " + merchantId));
+
+        // Récupérer la liste des relations MerchantMethodePayment associées à ce mode de paiement et à ce marchand
+        List<MerchantMethodePayment> merchantMethodPayments = merchantMethodePaymentRepository.findByPaymentMethodAndMerchant(paymentMethod, merchant);
+
+        // Mettre à jour le statut des marchands associés au mode de paiement
+        for (MerchantMethodePayment merchantMethodPayment : merchantMethodPayments) {
+            merchantMethodPayment.setStatus(status);
+            // Enregistrer les modifications dans la base de données
+            merchantMethodePaymentRepository.save(merchantMethodPayment);
+        }
+    }
+
+
+
+
 }
