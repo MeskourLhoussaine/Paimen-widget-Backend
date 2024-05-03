@@ -45,7 +45,7 @@ public class MerchantImplement implements MerchantService {
 
     }
 
-    /************----< get ALL Marchant >-----*******************/
+    /***********----< get ALL Marchant >-----*******************/
                              /**--#-- */
     @Override
     public List<MerchantDTO> listMerchantes() {
