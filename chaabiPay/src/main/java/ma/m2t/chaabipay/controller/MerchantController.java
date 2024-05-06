@@ -39,8 +39,8 @@ public class MerchantController {
         return merchantService.saveMerchant(MerchantDTO);
     }
 
-            /******************----< update Merchant Api >----*********************/
-                                          /**--#-- */
+               /******************----< update Merchant Api >----*********************/
+                         /**--#-- */
     @PutMapping("/updateMarchand/{id}")
     public MerchantDTO updateMerchant(@PathVariable Long id, @RequestBody MerchantDTO merchantDTO) throws MerchantExceptionNotFound {
         // Récupérer le marchand existant par son ID
@@ -58,6 +58,10 @@ public class MerchantController {
             existingMerchantDTO.setMarchandRcIf(merchantDTO.getMarchandRcIf());
             existingMerchantDTO.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
             existingMerchantDTO.setMarchandDgName(merchantDTO.getMarchandDgName());
+            existingMerchantDTO.setMarchandTypeActivite(merchantDTO.getMarchandTypeActivite());
+            existingMerchantDTO.setMarchandAnneeActivite(merchantDTO.getMarchandAnneeActivite());
+            existingMerchantDTO.setMarchandFormejuridique(merchantDTO.getMarchandFormejuridique());
+            existingMerchantDTO.setMarchandStatus(merchantDTO.getMarchandStatus());
 
             // Appeler le service pour mettre à jour le marchand
             return merchantService.updateMerchant(existingMerchantDTO);

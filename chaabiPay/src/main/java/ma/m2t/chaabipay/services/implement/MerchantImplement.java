@@ -89,6 +89,13 @@ public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
     existingMarchand.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
     existingMarchand.setMarchandDgName(merchantDTO.getMarchandDgName());
 
+    existingMarchand.setMarchandTypeActivite(merchantDTO.getMarchandTypeActivite());
+    existingMarchand.setMarchandAnneeActivite(merchantDTO.getMarchandAnneeActivite());
+    existingMarchand.setMarchandFormejuridique(merchantDTO.getMarchandFormejuridique());
+    existingMarchand.setMarchandStatus(merchantDTO.getMarchandStatus());
+
+
+
     // Enregistrer la mise à jour du marchand dans la base de données
     Merchant updatedMarchand = merchantRepository.save(existingMarchand);
     // Mapper l'entité mise à jour vers le DTO et le retourner
