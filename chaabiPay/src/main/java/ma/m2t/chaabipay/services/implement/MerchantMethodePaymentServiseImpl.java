@@ -48,9 +48,9 @@ public class MerchantMethodePaymentServiseImpl implements MerchantMethodePayment
             optionalPaymentMethod.ifPresent(paymentMethod -> {
                 Map<String, Object> methodMap = new HashMap<>();
                 methodMap.put("paymentMethodId", paymentMethod.getPaymentMethodId());
-                methodMap.put("methodName", paymentMethod.getName());
-                methodMap.put("methodDescription", paymentMethod.getDescription());
-                methodMap.put("methodIconUrl", paymentMethod.getIconUrl());
+                methodMap.put("name", paymentMethod.getName());
+                methodMap.put("description", paymentMethod.getDescription());
+                methodMap.put("iconUrl", paymentMethod.getIconUrl());
                 paymentMethods.add(methodMap);
             });
         }
