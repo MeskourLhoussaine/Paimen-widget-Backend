@@ -15,13 +15,16 @@ import ma.m2t.chaabipay.repositories.MerchantRepository;
 import ma.m2t.chaabipay.repositories.PaimentMethodeReposirory;
 import ma.m2t.chaabipay.services.MerchantService;
 import org.apache.commons.codec.binary.Hex;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,12 +52,12 @@ public class MerchantImplement implements MerchantService {
                              /**--#-- */
     @Override
     public List<MerchantDTO> listMerchantes() {
-        List<Merchant> merchants = merchantRepository.findAll();
-        List<MerchantDTO> merchantDTOS = merchants.stream()
-                .map(merchant -> dtoMapper.fromMerchant(merchant))
-                .collect(Collectors.toList());
-
-        return merchantDTOS;
+        List<Merchant> marchands = merchantRepository.findAll(Sort.by(Sort.Direction.ASC, "merchantId"));
+        List<MerchantDTO> marchandsDTO = new ArrayList<>();
+        for (Merchant m : marchands) {
+            marchandsDTO.add(dtoMapper.fromMerchant(m));
+        }
+        return marchandsDTO;
     }
     /*******----< Méthode pour Ajouter le marchand avec un cle secret encrypter >-----**********/
                                   /**--#-- */
@@ -75,26 +78,25 @@ public class MerchantImplement implements MerchantService {
 @Override
 public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
     // Récupérer le marchand existant par son ID
+    Merchant marchandToUpdate = dtoMapper.fromMerchantDTO(merchantDTO);
+
     Merchant existingMarchand = merchantRepository.findById(merchantDTO.getMerchantId())
             .orElseThrow(() -> new EntityNotFoundException("Merchant not found"));
-
-    // Mettre à jour tous les attributs du marchand avec les valeurs du DTO passé en paramètre
-    existingMarchand.setMerchantName(merchantDTO.getMerchantName());
-    existingMarchand.setMerchantDescrip(merchantDTO.getMerchantDescrip());
-    existingMarchand.setMerchantHost(merchantDTO.getMerchantHost());
-    existingMarchand.setMerchantUrl(merchantDTO.getMerchantUrl());
-    existingMarchand.setMarchandPhone(merchantDTO.getMarchandPhone());
-    existingMarchand.setMarchandEmail(merchantDTO.getMarchandEmail());
-    existingMarchand.setMarchandRcIf(merchantDTO.getMarchandRcIf());
-    existingMarchand.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
-    existingMarchand.setMarchandDgName(merchantDTO.getMarchandDgName());
-
-    existingMarchand.setMarchandTypeActivite(merchantDTO.getMarchandTypeActivite());
-    existingMarchand.setMarchandAnneeActivite(merchantDTO.getMarchandAnneeActivite());
-    existingMarchand.setMarchandFormejuridique(merchantDTO.getMarchandFormejuridique());
-    existingMarchand.setMarchandStatus(merchantDTO.getMarchandStatus());
-
-
+    // Update the existing marchand with the values from the DTO
+    existingMarchand.setMerchantName(marchandToUpdate.getMerchantName());
+    existingMarchand.setMerchantDescrip(marchandToUpdate.getMerchantDescrip());
+    existingMarchand.setMarchandPhone(marchandToUpdate.getMarchandPhone());
+    existingMarchand.setMerchantHost(marchandToUpdate.getMerchantHost());
+    existingMarchand.setMarchandEmail(marchandToUpdate.getMarchandEmail());
+    existingMarchand.setMerchantUrl(marchandToUpdate.getMerchantUrl());
+    existingMarchand.setMarchandStatus(marchandToUpdate.getMarchandStatus());
+    // Marchand info private
+    existingMarchand.setMarchandTypeActivite(marchandToUpdate.getMarchandTypeActivite());
+    existingMarchand.setMarchandRcIf(marchandToUpdate.getMarchandRcIf());
+    existingMarchand.setMarchandSiegeAddresse(marchandToUpdate.getMarchandSiegeAddresse());
+    existingMarchand.setMarchandDgName(marchandToUpdate.getMarchandDgName());
+    existingMarchand.setMarchandFormejuridique(marchandToUpdate.getMarchandFormejuridique());
+    existingMarchand.setMarchandAnneeActivite(marchandToUpdate.getMarchandAnneeActivite());
 
     // Enregistrer la mise à jour du marchand dans la base de données
     Merchant updatedMarchand = merchantRepository.save(existingMarchand);
@@ -117,7 +119,7 @@ public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
 
     @Override
     public void deleteMerchantById(Long merchantId) {
-
+        merchantRepository.deleteById(merchantId);
     }
 
 
@@ -218,19 +220,20 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
      * ********************************************************************/
 
     // Méthode pour générer une clé secrète aléatoire
-    private String generateSecretKey() {
-        // Définir la longueur de la clé (en bytes)
-        int keyLength = 32; // Par exemple, une clé de 256 bits
-
-        // Créer un objet SecureRandom pour générer des nombres aléatoires sécurisés
+    // Generate a secret key
+    public String generateSecretKey() {
         SecureRandom secureRandom = new SecureRandom();
-
-        // Générer un tableau de bytes aléatoires
-        byte[] randomBytes = new byte[keyLength];
+        byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
+        return new BigInteger(1, randomBytes).toString(16);
+    }
 
-        // Convertir les bytes en une chaîne Base64 pour une représentation lisible
-        return Base64.getEncoder().encodeToString(randomBytes);
+    //Hash
+    public static String hashSecretKey(String secretKey) {
+        return BCrypt.hashpw(secretKey, BCrypt.gensalt());
+    }
+    public static boolean verifySecretKey(String secretKey, String hashedKey) {
+        return BCrypt.checkpw(secretKey, hashedKey);
     }
 
     //la fonction de hashage
@@ -247,6 +250,8 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
                     System.out.println("HMAC Permission granted." + generatedHmac + "......" + merchant.getSucretkey());
                     return true;
                 } else {
+                    System.out.println("......"+merchantId+"......");
+
                     System.out.println("HMAC verification failed." + generatedHmac + "......" + merchant.getSucretkey());
                     return false;
                 }

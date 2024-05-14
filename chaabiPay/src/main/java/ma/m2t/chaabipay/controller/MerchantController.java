@@ -41,6 +41,7 @@ public class MerchantController {
 
                /******************----< update Merchant Api >----*********************/
                          /**--#-- */
+        /*
     @PutMapping("/updateMarchand/{id}")
     public MerchantDTO updateMerchant(@PathVariable Long id, @RequestBody MerchantDTO merchantDTO) throws MerchantExceptionNotFound {
         // Récupérer le marchand existant par son ID
@@ -62,6 +63,8 @@ public class MerchantController {
             existingMerchantDTO.setMarchandAnneeActivite(merchantDTO.getMarchandAnneeActivite());
             existingMerchantDTO.setMarchandFormejuridique(merchantDTO.getMarchandFormejuridique());
             existingMerchantDTO.setMarchandStatus(merchantDTO.getMarchandStatus());
+            existingMerchantDTO.setMerchantUrl(merchantDTO.getMerchantUrl());
+
 
             // Appeler le service pour mettre à jour le marchand
             return merchantService.updateMerchant(existingMerchantDTO);
@@ -69,13 +72,23 @@ public class MerchantController {
             throw new MerchantExceptionNotFound("Merchant not found with ID: " + id);
         }
     }
-
+*/
+                         @PutMapping("/update")
+                         public MerchantDTO updateCustomer(@RequestBody MerchantDTO marchandDTO){
+                             return merchantService.updateMerchant(marchandDTO);
+                         }
     /*****************----< delete Merchant Api >----************************/
                                  /**--#-- */
     @DeleteMapping("/delete")
     public void deleteMerchant(MerchantDTO merchantDTO) {
         merchantService.deleteMerchant(merchantDTO);
 
+    }
+
+    //DELETE
+    @DeleteMapping("/delete/{id}")
+    public void DeleteByID(@PathVariable(name = "id") Long id){
+        merchantService.deleteMerchantById(id);
     }
 
     /*********----< Add Merchant Api fait la meme chose que  saveMerchant  >----*******/

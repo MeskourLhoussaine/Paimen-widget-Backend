@@ -27,7 +27,7 @@ public class PaymentMethodController {
     private  MerchantMethodePaymentService merchantMethodePaymentService;
     @Autowired
     private PaymentMethodService paymentMethodService;
-    @PutMapping("/{merchantId}/payment-method/{paymentMethodId}")
+    @PutMapping("/{merchantId}/updatePayment-method/{paymentMethodId}")
     public void selectPaymentMethodInMerchant(@PathVariable Long merchantId, @PathVariable Long paymentMethodId) throws MerchantExceptionNotFound {
         merchantMethodePaymentService.selectPaymentMethodInMerchant(merchantId, paymentMethodId);
     }
