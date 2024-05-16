@@ -8,6 +8,7 @@ import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.entites.MerchantMethodePayment;
 import ma.m2t.chaabipay.entites.Merchant;
 import ma.m2t.chaabipay.entites.PaymentMethod;
+import ma.m2t.chaabipay.enums.Status;
 import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.MerchantMethodePaymentRepository;
@@ -244,7 +245,7 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
 
         for (Merchant merchant : merchants) {
             String merchantAccessKey = merchant.getAccessKey();
-            if (merchantAccessKey != null && merchant.getMerchantHost().equals(hostname) && merchantAccessKey.equals(accessKey)) {
+            if (merchant.getMerchantId().equals(Long.parseLong(merchantId)) && merchant.getMerchantHost().equals(hostname) && merchantAccessKey.equals(accessKey) &&  merchant.getMarchandStatus().equals(Status.Active)) {//**modifier
                 String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSucretkey());
                 if (hmac.equals(generatedHmac)) {
                     System.out.println("HMAC Permission granted." + generatedHmac + "......" + merchant.getSucretkey());

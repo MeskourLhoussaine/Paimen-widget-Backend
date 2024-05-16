@@ -127,17 +127,17 @@ public class MerchantController {
     public Boolean testPermission(
             @RequestParam String hostname,
             @RequestParam String accessKey,
-            @RequestParam String merchantId,
+            @RequestParam String marchandId,
             @RequestParam String orderId,
             @RequestParam double amount,
             @RequestParam String currency,
             @RequestParam String hmac) throws Exception {
 
-        Boolean hasPermission = merchantService.checkAccessRights(hostname, accessKey, merchantId, orderId, amount, currency, hmac);
+        Boolean hasPermission = merchantService.checkAccessRights(hostname, accessKey, marchandId, orderId, amount, currency, hmac);
 
         System.out.println("Hostname: " + hostname);
         System.out.println("Secret Key: " + accessKey);
-        System.out.println("Merchant ID: " + merchantId);
+        System.out.println("Merchant ID: " + marchandId);
         System.out.println("Order ID: " + orderId);
         System.out.println("Amount: " + amount);
         System.out.println("Currency: " + currency);

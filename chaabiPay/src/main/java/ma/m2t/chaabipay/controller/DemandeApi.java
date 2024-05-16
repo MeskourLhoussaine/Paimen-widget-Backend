@@ -16,12 +16,12 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @AllArgsConstructor
-@RequestMapping("api/demandes")
+@RequestMapping("/api/demandes")
 public class DemandeApi {
     private final DemandeService demandeService;
     private MerchantService marchandService;
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<DemandeDTO> saveNewDemande(@RequestBody DemandeDTO demandeDTO) {
         DemandeDTO savedDemande = demandeService.saveNewDemande(demandeDTO);
         return new ResponseEntity<>(savedDemande, HttpStatus.CREATED);
