@@ -8,7 +8,6 @@ import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.entites.MerchantMethodePayment;
 import ma.m2t.chaabipay.entites.Merchant;
 import ma.m2t.chaabipay.entites.PaymentMethod;
-import ma.m2t.chaabipay.enums.Status;
 import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.MerchantMethodePaymentRepository;
@@ -121,6 +120,16 @@ public MerchantDTO updateMerchant(MerchantDTO merchantDTO) {
     @Override
     public void deleteMerchantById(Long merchantId) {
         merchantRepository.deleteById(merchantId);
+    }
+
+    @Override
+    public int findMesrchantIdbyMerchantName(String merchantName) {
+        // Récupérer le marchand correspondant au nom donné
+        Merchant merchant = merchantRepository.findByMerchantName(merchantName)
+                .orElseThrow(() -> new EntityNotFoundException("Merchant not found with name: " + merchantName));
+
+        // Retourner l'ID du marchand
+        return merchant.getMerchantId().intValue(); // Si l'ID est de type Long, vous pouvez le convertir en int si nécessaire
     }
 
 
@@ -237,7 +246,7 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
         return BCrypt.checkpw(secretKey, hashedKey);
     }
 
-    //la fonction de hashage
+
     @Override
     public boolean checkAccessRights(String hostname, String accessKey, String merchantId, String orderId,
                                      double amount, String currency, String hmac) {
@@ -245,7 +254,7 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
 
         for (Merchant merchant : merchants) {
             String merchantAccessKey = merchant.getAccessKey();
-            if (merchant.getMerchantId().equals(Long.parseLong(merchantId)) && merchant.getMerchantHost().equals(hostname) && merchantAccessKey.equals(accessKey) &&  merchant.getMarchandStatus().equals(Status.Active)) {//**modifier
+            if (merchantAccessKey != null && merchant.getMerchantHost().equals(hostname) && merchantAccessKey.equals(accessKey)) {
                 String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSucretkey());
                 if (hmac.equals(generatedHmac)) {
                     System.out.println("HMAC Permission granted." + generatedHmac + "......" + merchant.getSucretkey());
@@ -293,6 +302,8 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
         }
     }
 
+
+    /*usin for aytenticated by marchand*/
 
 
 

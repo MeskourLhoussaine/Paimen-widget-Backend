@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface MerchantRepository extends JpaRepository<Merchant,Long> {
     Optional<Merchant> findByMerchantHost(String merchantHost);
-
-
+/*using for Authenticated */
+    Optional<Merchant> findByMerchantName(String merchantName);
 }

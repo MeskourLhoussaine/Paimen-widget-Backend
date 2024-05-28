@@ -5,6 +5,7 @@ import ma.m2t.chaabipay.entites.PaymentMethod;
 import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface MerchantService {
@@ -27,4 +28,7 @@ void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> methodePaieme
     MerchantDTO updateMerchant(MerchantDTO merchantDTO);
     void deleteMerchant(MerchantDTO merchantDTO);
     void deleteMerchantById(Long merchantId);
+
+    /*usin for Autenticated by marchand */
+int findMesrchantIdbyMerchantName(String merchantName);
 }

@@ -4,15 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import ma.m2t.chaabipay.dtos.MerchantDTO;
 import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
+import ma.m2t.chaabipay.repositories.MerchantRepository;
 import ma.m2t.chaabipay.services.MerchantMethodePaymentService;
 import ma.m2t.chaabipay.services.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -25,6 +28,8 @@ public class MerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantMethodePaymentService merchantMethodePaymentService;
+    @Autowired
+    private MerchantRepository merchantRepository;
     /****************----< find All  Merchant Api >----**************/
                                    /**--#-- */
     @GetMapping("/findAll")
@@ -41,38 +46,9 @@ public class MerchantController {
 
                /******************----< update Merchant Api >----*********************/
                          /**--#-- */
-        /*
-    @PutMapping("/updateMarchand/{id}")
-    public MerchantDTO updateMerchant(@PathVariable Long id, @RequestBody MerchantDTO merchantDTO) throws MerchantExceptionNotFound {
-        // Récupérer le marchand existant par son ID
-        MerchantDTO existingMerchantDTO = merchantService.findMerchantById(id);
-
-        // Vérifier si le marchand existe
-        if (existingMerchantDTO != null) {
-            // Mettre à jour chaque attribut du marchand existant avec les valeurs du DTO passé en paramètre
-            existingMerchantDTO.setMerchantName(merchantDTO.getMerchantName());
-            existingMerchantDTO.setMerchantDescrip(merchantDTO.getMerchantDescrip());
-            existingMerchantDTO.setMerchantHost(merchantDTO.getMerchantHost());
-            existingMerchantDTO.setMerchantUrl(merchantDTO.getMerchantUrl());
-            existingMerchantDTO.setMarchandPhone(merchantDTO.getMarchandPhone());
-            existingMerchantDTO.setMarchandEmail(merchantDTO.getMarchandEmail());
-            existingMerchantDTO.setMarchandRcIf(merchantDTO.getMarchandRcIf());
-            existingMerchantDTO.setMarchandSiegeAddresse(merchantDTO.getMarchandSiegeAddresse());
-            existingMerchantDTO.setMarchandDgName(merchantDTO.getMarchandDgName());
-            existingMerchantDTO.setMarchandTypeActivite(merchantDTO.getMarchandTypeActivite());
-            existingMerchantDTO.setMarchandAnneeActivite(merchantDTO.getMarchandAnneeActivite());
-            existingMerchantDTO.setMarchandFormejuridique(merchantDTO.getMarchandFormejuridique());
-            existingMerchantDTO.setMarchandStatus(merchantDTO.getMarchandStatus());
-            existingMerchantDTO.setMerchantUrl(merchantDTO.getMerchantUrl());
 
 
-            // Appeler le service pour mettre à jour le marchand
-            return merchantService.updateMerchant(existingMerchantDTO);
-        } else {
-            throw new MerchantExceptionNotFound("Merchant not found with ID: " + id);
-        }
-    }
-*/
+               @PreAuthorize("hasRole('ROLE_MARCHAND')")
                          @PutMapping("/update")
                          public MerchantDTO updateCustomer(@RequestBody MerchantDTO marchandDTO){
                              return merchantService.updateMerchant(marchandDTO);
@@ -127,17 +103,17 @@ public class MerchantController {
     public Boolean testPermission(
             @RequestParam String hostname,
             @RequestParam String accessKey,
-            @RequestParam String marchandId,
+            @RequestParam String merchantId,
             @RequestParam String orderId,
             @RequestParam double amount,
             @RequestParam String currency,
             @RequestParam String hmac) throws Exception {
 
-        Boolean hasPermission = merchantService.checkAccessRights(hostname, accessKey, marchandId, orderId, amount, currency, hmac);
+        Boolean hasPermission = merchantService.checkAccessRights(hostname, accessKey, merchantId, orderId, amount, currency, hmac);
 
         System.out.println("Hostname: " + hostname);
         System.out.println("Secret Key: " + accessKey);
-        System.out.println("Merchant ID: " + marchandId);
+        System.out.println("Merchant ID: " + merchantId);
         System.out.println("Order ID: " + orderId);
         System.out.println("Amount: " + amount);
         System.out.println("Currency: " + currency);
@@ -168,4 +144,9 @@ public class MerchantController {
         return merchantMethodePaymentService.getMerchantPaymentMethod(marchandId);
     }
 
+    /*usin for authenticated by marchand */
+    @GetMapping("/merchandId/{merchantName}")
+    public int findMesrchantIdbyMerchantName(@PathVariable String merchantName) {
+        return merchantService.findMesrchantIdbyMerchantName(merchantName);
+    }
 }
