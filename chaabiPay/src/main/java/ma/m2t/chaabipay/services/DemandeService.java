@@ -29,8 +29,17 @@ public interface DemandeService {
     // Set (verified=true Accepted=true)  and  Save merchand
     DemandeDTO UpdateDemandeAccepted(Long demandeId) throws MerchantExceptionNotFound;
 
+    DemandeDTO UpdateDemandeValuesAndAccepted(Long demandeId,DemandeDTO demandeDTO) throws MerchantExceptionNotFound;
+
+    DemandeDTO UpdateDemandeValues(Long demandeId,DemandeDTO demandeDTO) throws MerchantExceptionNotFound;
+
 ///****************************************************************************************************
 //Delete
+
+
+    ///****************************************************************************************************
+    /////////////// SEE
+   // public Flux<DemandeDTO> getAllDemandesNotVerifiedSEE();
 
 
 }

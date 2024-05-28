@@ -1,5 +1,6 @@
 package ma.m2t.chaabipay;
 
+import ma.m2t.chaabipay.controller.AuthController;
 import ma.m2t.chaabipay.services.implement.MerchantImplement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,8 +25,10 @@ public class ChaabiPayApplication {
         // Appel de la méthode generateHmac avec les paramètres appropriés
         String hmac = merchantImplement.generateHmac(merchantId, orderId, amount, currency, secretKey);
         System.out.println("Generated HMAC: " + hmac);
-
-
+        AuthController auth=new AuthController();
+/*
+AuthController authe =new AuthController();
+        System.out.println("Generated Password: " + authe.generateRandomPassword());*/
     }
 
 }

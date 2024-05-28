@@ -9,9 +9,11 @@ import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.DemandeRepository;
 import ma.m2t.chaabipay.services.DemandeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,8 +23,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @CrossOrigin("*")
 public class DemandeServiceImpl implements DemandeService {
+    @Autowired
     private final DemandeRepository demandeRepository;
+    @Autowired
     private final ImplementMapers payMapper;
+//    private SimpMessagingTemplate messagingTemplate;
+
 
 
     @Override
@@ -31,6 +37,8 @@ public class DemandeServiceImpl implements DemandeService {
         demandeDTO.setDemandeIsVerified(false);
         Demande demande = payMapper.fromDemandeDTO(demandeDTO);
         Demande savedDemande = demandeRepository.save(demande);
+//        // After saving the demand, send it to WebSocket clients
+//        messagingTemplate.convertAndSend("/topic/newDemande", demandeDTO);
         return payMapper.fromDemande(savedDemande);
     }
 
@@ -50,13 +58,17 @@ public class DemandeServiceImpl implements DemandeService {
     @Override
     public List<DemandeDTO> getAllDemandesNotVerified() {
         List<Demande> demandes = demandeRepository.findAllByDemandeIsVerifiedFalse();
-        return demandes.stream().map(payMapper::fromDemande).collect(Collectors.toList());
+        return demandes.stream()
+                .sorted(Comparator.comparing(Demande::getDemandeId))
+                .map(payMapper::fromDemande)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public DemandeDTO UpdateDemandeRejected(Long demandeId) throws MerchantExceptionNotFound {
         Demande demande = demandeRepository.findById(demandeId)
-                .orElseThrow(() -> new MerchantExceptionNotFound ("Demande not found with ID: " + demandeId));
+                .orElseThrow(() -> new MerchantExceptionNotFound("Demande not found with ID: " + demandeId));
         demande.setDemandeIsVerified(true);
         demande.setDemandeIsAccepted(false);
         Demande savedDemande = demandeRepository.save(demande);
@@ -66,11 +78,85 @@ public class DemandeServiceImpl implements DemandeService {
     @Override
     public DemandeDTO UpdateDemandeAccepted(Long demandeId) throws MerchantExceptionNotFound {
         Demande demande = demandeRepository.findById(demandeId)
-                .orElseThrow(() -> new MerchantExceptionNotFound ("Demande not found with ID: " + demandeId));
+                .orElseThrow(() -> new MerchantExceptionNotFound("Demande not found with ID: " + demandeId));
         demande.setDemandeIsVerified(true);
         demande.setDemandeIsAccepted(true);
         Demande savedDemande = demandeRepository.save(demande);
         // Implement logic to save merchand here
         return payMapper.fromDemande(savedDemande);
     }
+
+    @Override
+    public DemandeDTO UpdateDemandeValuesAndAccepted(Long demandeId, DemandeDTO demandeDTO) throws MerchantExceptionNotFound {
+        Demande demande = demandeRepository.findById(demandeId)
+                .orElseThrow(() -> new MerchantExceptionNotFound("Demande not found with ID: " + demandeId));
+
+        // Update all attributes from demandeDTO to demande
+        demande.setDemandeMarchandName(demandeDTO.getDemandeMarchandName());
+        demande.setDemandeMarchandDescription(demandeDTO.getDemandeMarchandDescription());
+        demande.setDemandeMarchandPhone(demandeDTO.getDemandeMarchandPhone());
+        demande.setDemandeMarchandHost(demandeDTO.getDemandeMarchandHost());
+        demande.setDemandeMarchandEmail(demandeDTO.getDemandeMarchandEmail());
+        demande.setDemandeMarchandLogoUrl(demandeDTO.getDemandeMarchandLogoUrl());
+        demande.setDemandeMarchandStatus(demandeDTO.getDemandeMarchandStatus());
+        demande.setDemandeMarchandTypeActivite(demandeDTO.getDemandeMarchandTypeActivite());
+        demande.setDemandeMarchandRcIf(demandeDTO.getDemandeMarchandRcIf());
+        demande.setDemandeMarchandSiegeAddresse(demandeDTO.getDemandeMarchandSiegeAddresse());
+        demande.setDemandeMarchandDgName(demandeDTO.getDemandeMarchandDgName());
+        demande.setDemandeMarchandFormejuridique(demandeDTO.getDemandeMarchandFormejuridique());
+        demande.setDemandeMarchandAnneeActivite(demandeDTO.getDemandeMarchandAnneeActivite());
+
+        // Set validation fields
+        demande.setDemandeIsVerified(true);
+        demande.setDemandeIsAccepted(true);
+
+        Demande savedDemande = demandeRepository.save(demande);
+
+        // Implement logic to save related entities (e.g., marchand) here if needed
+        return payMapper.fromDemande(savedDemande);
+    }
+
+
+
+
+    @Override
+    public DemandeDTO UpdateDemandeValues(Long demandeId, DemandeDTO demandeDTO) throws MerchantExceptionNotFound {
+        Demande demande = demandeRepository.findById(demandeId)
+                .orElseThrow(() -> new MerchantExceptionNotFound("Demande not found with ID: " + demandeId));
+
+        // Update all attributes from demandeDTO to demande
+        demande.setDemandeMarchandName(demandeDTO.getDemandeMarchandName());
+        demande.setDemandeMarchandDescription(demandeDTO.getDemandeMarchandDescription());
+        demande.setDemandeMarchandPhone(demandeDTO.getDemandeMarchandPhone());
+        demande.setDemandeMarchandHost(demandeDTO.getDemandeMarchandHost());
+        demande.setDemandeMarchandEmail(demandeDTO.getDemandeMarchandEmail());
+        demande.setDemandeMarchandLogoUrl(demandeDTO.getDemandeMarchandLogoUrl());
+        demande.setDemandeMarchandStatus(demandeDTO.getDemandeMarchandStatus());
+        demande.setDemandeMarchandTypeActivite(demandeDTO.getDemandeMarchandTypeActivite());
+        demande.setDemandeMarchandRcIf(demandeDTO.getDemandeMarchandRcIf());
+        demande.setDemandeMarchandSiegeAddresse(demandeDTO.getDemandeMarchandSiegeAddresse());
+        demande.setDemandeMarchandDgName(demandeDTO.getDemandeMarchandDgName());
+        demande.setDemandeMarchandFormejuridique(demandeDTO.getDemandeMarchandFormejuridique());
+        demande.setDemandeMarchandAnneeActivite(demandeDTO.getDemandeMarchandAnneeActivite());
+
+        // Set validation fields
+        demande.setDemandeIsVerified(false);
+        demande.setDemandeIsAccepted(false);
+
+        Demande savedDemande = demandeRepository.save(demande);
+
+        // Implement logic to save related entities (e.g., marchand) here if needed
+        return payMapper.fromDemande(savedDemande);
+    }
+///****************************************************************************************************
+    /// SEE
+/*
+    @Override
+    public Flux<DemandeDTO> getAllDemandesNotVerifiedSEE() {
+        return Flux.defer(() ->
+                Flux.fromIterable(demandeRepository.findAllByDemandeIsVerifiedFalse())
+                        .map(payMapper::fromDemande)
+        );
+    }*/
+
 }

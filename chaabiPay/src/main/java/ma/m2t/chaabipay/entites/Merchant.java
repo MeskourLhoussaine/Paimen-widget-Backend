@@ -21,8 +21,8 @@ public class Merchant {
 
     private Long merchantId;
     // Marchand info
+    @Column(nullable = false, length = 12, unique = true)
     private String merchantName;
-
     private String merchantDescrip;
     private String merchantHost; //le lien
     private String merchantUrl; //logoUrl
@@ -35,6 +35,7 @@ public class Merchant {
     private String marchandTypeActivite;
     private String marchandRcIf;
     private String marchandSiegeAddresse;
+
     private String marchandDgName;
     @Enumerated(EnumType.STRING)
     private Formejuridique marchandFormejuridique;
