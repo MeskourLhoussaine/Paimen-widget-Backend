@@ -20,6 +20,10 @@ public class UpdateProfileRequest {
     @Size(max = 20)
     private String lastName;
 
+    @NotBlank
+    @Size(max = 100)
+    private String profilLogoUrl; // if marchand ==> profilLogoUrl == marchandLogoUrl@Enumerated(EnumType.STRING)
+
     @Size(max = 40)
     private String oldPassword;
 
@@ -36,6 +40,14 @@ public class UpdateProfileRequest {
     @Email
     private String email;
     // Getters and Setters
+
+    public String getProfilLogoUrl() {
+        return profilLogoUrl;
+    }
+
+    public void setProfilLogoUrl(String profilLogoUrl) {
+        this.profilLogoUrl = profilLogoUrl;
+    }
 
     public String getUsername() {
         return username;

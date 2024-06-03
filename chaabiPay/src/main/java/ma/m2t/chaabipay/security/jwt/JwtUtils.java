@@ -28,8 +28,8 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
+                .claim("id", userPrincipal.getId()) // Ajoute l'ID de l'utilisateur
                 .claim("roles", userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())) // Ajoute les rôles
-              //  .claim("password", userPrincipal.getPassword()) // Ajoute le mot de passe (à des fins de démonstration, cela n'est généralement pas recommandé)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)

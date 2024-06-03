@@ -14,6 +14,7 @@ import ma.m2t.chaabipay.repositories.RoleRepository;
 import ma.m2t.chaabipay.repositories.UserRepository;
 import ma.m2t.chaabipay.security.jwt.JwtUtils;
 import ma.m2t.chaabipay.security.jwt.services.UserDetailsImpl;
+import ma.m2t.chaabipay.security.jwt.services.UserService;
 import ma.m2t.chaabipay.services.implement.ChangePasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    @Autowired
+    private UserService userService2;
     @Autowired
    AuthenticationManager authenticationManager;
 
@@ -175,21 +178,21 @@ public class AuthController {
 
     //update by id
     @PutMapping("/updateprofile/{id}")
-    public ResponseEntity<?> updateUserProfileById(@Valid @RequestBody UpdateProfileRequest signupRequest, @PathVariable Long id) {
+    public ResponseEntity<?> updateUserProfileById(@Valid @RequestBody UpdateProfileRequest updateProfileRequest, @PathVariable Long id) {
         // Rechercher l'utilisateur par ID dans la base de données
         User currentUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
 
         // Mettre à jour les informations de l'utilisateur
-        currentUser.setFirstName(signupRequest.getFirstName());
-        currentUser.setLastName(signupRequest.getLastName());
-        currentUser.setUsername(signupRequest.getUsername());
-      //  currentUser.setProfilLogoUrl(signupRequest.getProfilLogoUrl());
-       currentUser.setEmail(signupRequest.getEmail());
-        currentUser.setStatus(UserStatus.valueOf(signupRequest.getStatus())); // Mettre à jour le statut
+        currentUser.setFirstName(updateProfileRequest.getFirstName());
+        currentUser.setLastName(updateProfileRequest.getLastName());
+        currentUser.setUsername(updateProfileRequest.getUsername());
+        currentUser.setProfilLogoUrl(updateProfileRequest.getProfilLogoUrl());
+       currentUser.setEmail(updateProfileRequest.getEmail());
+        currentUser.setStatus(UserStatus.valueOf(updateProfileRequest.getStatus())); // Mettre à jour le statut
 
         // Mettre à jour les rôles de l'utilisateur
-        Set<Role> roles = new HashSet<>(signupRequest.getRoles());
+        Set<Role> roles = new HashSet<>(updateProfileRequest.getRoles());
         currentUser.setRoles(roles);
 
         // Enregistrer l'utilisateur mis à jour dans la base de données
@@ -205,6 +208,7 @@ public class AuthController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            System.out.println(signUpRequest.getPassword());
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
@@ -225,36 +229,15 @@ public class AuthController {
                 encoder.encode(signUpRequest.getPassword()), // Utilisez le mot de passe aléatoire généré
                 signUpRequest.getStatus().toString(),
                 signUpRequest.getProfilLogoUrl()
+
         );
 
         // Définir les rôles de l'utilisateur
-        Set<String> strRoles = signUpRequest.getRole();
+         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_COMERCIAL)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-                        break;
-                    case "marchand":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MARCHAND)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_COMERCIAL)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
+
+
 
         user.setRoles(roles);
         userRepository.save(user);
@@ -276,6 +259,11 @@ public class AuthController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);
         return ResponseEntity.ok().build();
+
+    }
+    @GetMapping("/findbyid/{id}")
+    public User findById(@PathVariable Long id) {
+        return userService2.findById(id);
     }
 
 }

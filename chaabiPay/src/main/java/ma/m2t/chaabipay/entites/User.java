@@ -69,6 +69,16 @@ public class User {
         this.profilLogoUrl=profilLogoUrl;
     }
 
+    public User(String username, String firstName, String lastName, UserStatus status, String email, String password, String profilLogoUrl, Set<Role> roles) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.status = status;
+        this.email = email;
+        this.password = password;
+        this.profilLogoUrl = profilLogoUrl;
+        this.roles = roles;
+    }
 
     public User(String username, String firstName, String lastName, String password) {
         this.username = username;
