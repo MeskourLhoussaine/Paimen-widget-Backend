@@ -212,7 +212,7 @@ public class AuthController {
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        // Créer un nouvel utilisateur avec le statut par défaut "Inactive"
+        // Créer un nouvel utilisateur avec le statut par défaut "Inactive"AA
         User user = new User(
                 signUpRequest.getUsername(),
                 signUpRequest.getFirstName(),

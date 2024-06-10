@@ -34,7 +34,7 @@ public class SignupRequest {
     private Set<String> roles;
 
     @NotBlank
-    @Size(min = 6, max = 200)
+    @Size(min = 6, max = 200)//
     private String password;
 
     // Suppression de la méthode generateRandomPassword() car elle n'est plus nécessaire ici
