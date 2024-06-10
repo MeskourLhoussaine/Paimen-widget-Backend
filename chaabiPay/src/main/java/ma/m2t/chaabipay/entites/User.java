@@ -80,6 +80,18 @@ public class User {
         this.roles = roles;
     }
 
+    public User(Long id, Set<Role> roles, String profilLogoUrl, String password, String email, UserStatus status, String lastName, String firstName, String username) {
+        this.id = id;
+        this.roles = roles;
+        this.profilLogoUrl = profilLogoUrl;
+        this.password = password;
+        this.email = email;
+        this.status = status;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.username = username;
+    }
+
     public User(String username, String firstName, String lastName, String password) {
         this.username = username;
         this.firstName = firstName;

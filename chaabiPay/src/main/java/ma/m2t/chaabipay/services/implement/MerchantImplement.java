@@ -2,12 +2,14 @@ package ma.m2t.chaabipay.services.implement;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ma.m2t.chaabipay.dtos.MerchantDTO;
 import ma.m2t.chaabipay.dtos.PaimentMethodeDTO;
 import ma.m2t.chaabipay.entites.MerchantMethodePayment;
 import ma.m2t.chaabipay.entites.Merchant;
 import ma.m2t.chaabipay.entites.PaymentMethod;
+import ma.m2t.chaabipay.enums.Status;
 import ma.m2t.chaabipay.exceptions.MerchantExceptionNotFound;
 import ma.m2t.chaabipay.mappers.ImplementMapers;
 import ma.m2t.chaabipay.repositories.MerchantMethodePaymentRepository;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @CrossOrigin("*")
 @Slf4j
+
 public class MerchantImplement implements MerchantService {
 @Autowired
     private ImplementMapers dtoMapper;
@@ -250,25 +253,25 @@ public void associerMethodesPaiementToMerchant(Long marchandId, Set<Long> method
     @Override
     public boolean checkAccessRights(String hostname, String accessKey, String merchantId, String orderId,
                                      double amount, String currency, String hmac) {
-        List<Merchant> merchants = merchantRepository.findAll();
+        List<Merchant> marchands = merchantRepository.findAll();
 
-        for (Merchant merchant : merchants) {
-            String merchantAccessKey = merchant.getAccessKey();
-            if (merchantAccessKey != null && merchant.getMerchantHost().equals(hostname) && merchantAccessKey.equals(accessKey)) {
-                String generatedHmac = generateHmac(merchantId, orderId, amount, currency, merchant.getSucretkey());
+        for (Merchant marchand : marchands) {
+            //verify the dehash secret key if equals to secretKey provided
+            if ( marchand.getMerchantId().equals(Long.parseLong(merchantId)) &&  marchand.getMerchantHost().equals(hostname) && marchand.getAccessKey().equals(accessKey) && marchand.getMarchandStatus().equals(Status.Active)) {
+                String generatedHmac = generateHmac(merchantId, orderId, amount, currency, marchand.getSucretkey());
                 if (hmac.equals(generatedHmac)) {
-                    System.out.println("HMAC Permission granted." + generatedHmac + "......" + merchant.getSucretkey());
+                    System.out.println("HMAC Permission granted."+generatedHmac+"......"+ marchand.getSucretkey());
                     return true;
                 } else {
                     System.out.println("......"+merchantId+"......");
 
-                    System.out.println("HMAC verification failed." + generatedHmac + "......" + merchant.getSucretkey());
+                    System.out.println("HMAC verification failed."+generatedHmac+"......"+ marchand.getSucretkey());
                     return false;
                 }
             }
         }
 
-        System.out.println("Merchant not found with provided hostname and secret key.");
+        System.out.println("Marchand not found with provided hostname and secret key.");
         return false;
     }
 

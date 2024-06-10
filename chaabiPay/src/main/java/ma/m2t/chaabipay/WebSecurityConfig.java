@@ -79,7 +79,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 //
 //    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //  }
-
+/*
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -87,13 +87,29 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(request -> request.requestMatchers("api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/auth/delete/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/signin").permitAll() // Autoriser l'accès à /signin sans authentification
-                        .requestMatchers("/api/auth/signup").hasAnyAuthority(ERole.ROLE_ADMIN.name())
+                       .requestMatchers("/api/auth/signup").hasAnyAuthority(ERole.ROLE_ADMIN.name())
                         .requestMatchers("/api/admin/**").hasAnyAuthority(ERole.ROLE_ADMIN.name())
                         .requestMatchers("/api/marchand/**").hasAnyAuthority(ERole.ROLE_MARCHAND.name())
-                        .requestMatchers("/api/comercial/**").hasAnyAuthority(ERole.ROLE_COMERCIAL.name())
+                      .requestMatchers("/api/comercial/**").hasAnyAuthority(ERole.ROLE_COMERCIAL.name())
                 .requestMatchers("/api/test/**").permitAll()
                 .requestMatchers("api/**").permitAll()
                 .anyRequest().authenticated());
+
+        http.authenticationProvider(authenticationProvider());
+
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }*/
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+
+                .authorizeRequests().requestMatchers("api/auth/**").permitAll()
+                .requestMatchers("api/test/**").permitAll()
+                .requestMatchers("api/**").permitAll()
+                .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());
 
