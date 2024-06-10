@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    private UserService userService2;
+    private UserService userService;
     @Autowired
    AuthenticationManager authenticationManager;
 
@@ -86,11 +86,11 @@ public class AuthController {
     }
 
     @PutMapping("/users/{userId}/password")
-
     public ResponseEntity<?> updatePassword(
             @PathVariable Long userId, @Valid @RequestBody ChangePasswordRequest updatePasswordRequest) {
 
-        User user = userRepository.getReferenceById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         if (!encoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid old password");
@@ -203,54 +203,70 @@ public class AuthController {
 
 
 
-
     @PostMapping("/signup")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            System.out.println(signUpRequest.getPassword());
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
         // Créer un nouvel utilisateur avec le statut par défaut "Inactive"
-        signUpRequest.setStatus(UserStatus.Inactive);
-
-        // Générer un mot de passe aléatoire
-     //   String generatedPassword = generateRandomPassword();
-
-        // Créer un nouvel utilisateur à partir des informations fournies dans la requête
         User user = new User(
                 signUpRequest.getUsername(),
                 signUpRequest.getFirstName(),
                 signUpRequest.getLastName(),
+                UserStatus.Inactive,
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()), // Utilisez le mot de passe aléatoire généré
-                signUpRequest.getStatus().toString(),
-                signUpRequest.getProfilLogoUrl()
-
+                signUpRequest.getProfilLogoUrl(),
+               new HashSet<>() // Créez un ensemble vide pour les rôles
         );
 
         // Définir les rôles de l'utilisateur
-         Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        setRoles(signUpRequest.getRoles(), user.getRoles());
 
-
-
-
-        user.setRoles(roles);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    // Méthode pour générer un mot de passe aléatoire
-    private String generateRandomPassword() {
-        SecureRandom random = new SecureRandom();
-        byte[] passwordBytes = new byte[8]; // Longueur du mot de passe
-        random.nextBytes(passwordBytes);
-        return Base64.getEncoder().encodeToString(passwordBytes);
+    private void setRoles(Set<String> strRoles, Set<Role> roles) {
+        if (strRoles == null || strRoles.isEmpty()) {
+            // Si aucun rôle n'est spécifié, ajoutez simplement le rôle ROLE_ADMIN par défaut
+            Role comercialRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(comercialRole);
+        } else if (strRoles.size() == 1 && strRoles.contains("ROLE_ADMIN")) {
+            // Si seul le rôle ROLE_ADMIN est spécifié
+            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(adminRole);
+        } else {
+            // Ajoutez tous les rôles spécifiés par l'utilisateur
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "ROLE_ADMIN":
+                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(adminRole);
+                        break;
+                    case "ROLE_MARCHAND":
+                        Role marchandRole = roleRepository.findByName(ERole.ROLE_MARCHAND)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(marchandRole);
+                        break;
+                    case "ROLE_COMERCIAL":
+                        Role comercialRole = roleRepository.findByName(ERole.ROLE_COMERCIAL)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(comercialRole);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Error: Invalid Role specified: " + role);
+                }
+            });
+        }
     }
 
 
@@ -263,7 +279,7 @@ public class AuthController {
     }
     @GetMapping("/findbyid/{id}")
     public User findById(@PathVariable Long id) {
-        return userService2.findById(id);
+        return userService.findById(id);
     }
 
 }
