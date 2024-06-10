@@ -1,6 +1,8 @@
 package ma.m2t.chaabipay.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import ma.m2t.chaabipay.emailing.EmailService;
 import ma.m2t.chaabipay.entites.Role;
 import ma.m2t.chaabipay.entites.User;
 import ma.m2t.chaabipay.enums.ERole;
@@ -44,19 +46,21 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @Autowired
-   AuthenticationManager authenticationManager;
+   private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+   private  UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+   private  RoleRepository roleRepository;
 
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
 
     @Autowired
-    JwtUtils jwtUtils;
+    private JwtUtils jwtUtils;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -212,16 +216,16 @@ public class AuthController {
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        // Créer un nouvel utilisateur avec le statut par défaut "Inactive"AA
+        // Créer un nouvel utilisateur avec le statut par défaut "Inactive"
         User user = new User(
                 signUpRequest.getUsername(),
                 signUpRequest.getFirstName(),
                 signUpRequest.getLastName(),
                 UserStatus.Inactive,
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), // Utilisez le mot de passe aléatoire généré
+                encoder.encode(signUpRequest.getPassword()), // Utilisez le mot de passe fourni
                 signUpRequest.getProfilLogoUrl(),
-               new HashSet<>() // Créez un ensemble vide pour les rôles
+                new HashSet<>() // Créez un ensemble vide pour les rôles
         );
 
         // Définir les rôles de l'utilisateur
@@ -229,45 +233,47 @@ public class AuthController {
 
         userRepository.save(user);
 
+        // Envoyer l'email basé sur le rôle de l'utilisateur
+        sendRoleBasedEmail(user, signUpRequest.getPassword());
+
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
+    //cette fonction est utilisée pour définir les rôles d'un utilisateur lors de son inscription
+
     private void setRoles(Set<String> strRoles, Set<Role> roles) {
         if (strRoles == null || strRoles.isEmpty()) {
-            // Si aucun rôle n'est spécifié, ajoutez simplement le rôle ROLE_ADMIN par défaut
-            Role comercialRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+            Role defaultRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(comercialRole);
-        } else if (strRoles.size() == 1 && strRoles.contains("ROLE_ADMIN")) {
-            // Si seul le rôle ROLE_ADMIN est spécifié
-            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(adminRole);
+            roles.add(defaultRole);
         } else {
-            // Ajoutez tous les rôles spécifiés par l'utilisateur
             strRoles.forEach(role -> {
-                switch (role) {
-                    case "ROLE_ADMIN":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-                        break;
-                    case "ROLE_MARCHAND":
-                        Role marchandRole = roleRepository.findByName(ERole.ROLE_MARCHAND)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(marchandRole);
-                        break;
-                    case "ROLE_COMERCIAL":
-                        Role comercialRole = roleRepository.findByName(ERole.ROLE_COMERCIAL)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(comercialRole);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Error: Invalid Role specified: " + role);
-                }
+                Role userRole = roleRepository.findByName(ERole.valueOf(role))
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(userRole);
             });
         }
     }
+//Cette  méthode est utiliser pour envoyer des emails basés sur le rôle
+    private void sendRoleBasedEmail(User user, String password) {
+        boolean isMarchand = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals(ERole.ROLE_MARCHAND));
+
+        boolean isCommercial = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals(ERole.ROLE_COMERCIAL));
+
+        try {
+            if (isMarchand) {
+                emailService.sendPasswordMarchandEmail(user.getEmail(), user.getUsername(), password);
+            } else if (isCommercial) {
+                emailService.sendPasswordCommercialEmail(user.getEmail(), user.getUsername(), password);
+            }
+        } catch (MessagingException e) {
+            // Gérer les exceptions d'envoi d'email
+            throw new RuntimeException("User registered but failed to send email: " + e.getMessage());
+        }
+    }
+
 
 
     @DeleteMapping("/delete/{id}")
