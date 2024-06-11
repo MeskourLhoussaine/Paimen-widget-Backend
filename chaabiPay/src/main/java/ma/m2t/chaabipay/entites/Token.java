@@ -13,21 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @DiscriminatorValue("token")
 @Entity
-public class Token extends PaymentMethod {
-  //  private Long tokenId;
-  //  private String tokenResponse;
- //  private String tokenName;
- //   private String tokenEmail;
-    ///////////////////////////operToken
-    private String orderId;
-    private String serviceId;
-    private String organismId;
-    private String customerMail;
-    ////////////////////
-    private String orderAmount;
-    private String requestDate;
-    private String expirationDate;
-    private String checkSum;
-    private String tokenStatus;
-    /*###pour transaction service##*/
+public class Token extends PaymentMethod {   private Long tokenId;
+
+  private String tokenResponse;
+  private String tokenName;
+  private String tokenEmail;
 }
