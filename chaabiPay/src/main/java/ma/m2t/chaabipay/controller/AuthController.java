@@ -2,6 +2,9 @@ package ma.m2t.chaabipay.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ma.m2t.chaabipay.emailing.EmailService;
 import ma.m2t.chaabipay.entites.Role;
 import ma.m2t.chaabipay.entites.User;
@@ -42,13 +45,15 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+
+
 public class AuthController {
-    @Autowired
+   @Autowired
     private UserService userService;
-    @Autowired
+   @Autowired
    private AuthenticationManager authenticationManager;
 
-    @Autowired
+   @Autowired
    private  UserRepository userRepository;
 
     @Autowired
@@ -243,7 +248,7 @@ public class AuthController {
 
     private void setRoles(Set<String> strRoles, Set<Role> roles) {
         if (strRoles == null || strRoles.isEmpty()) {
-            Role defaultRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+            Role defaultRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(defaultRole);
         } else {
