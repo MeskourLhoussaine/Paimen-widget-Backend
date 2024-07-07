@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.m2t.chaabipay.emailing.EmailService;
+
 import ma.m2t.chaabipay.entites.Role;
 import ma.m2t.chaabipay.entites.User;
 import ma.m2t.chaabipay.enums.ERole;
@@ -21,6 +21,7 @@ import ma.m2t.chaabipay.security.jwt.JwtUtils;
 import ma.m2t.chaabipay.security.jwt.services.UserDetailsImpl;
 import ma.m2t.chaabipay.security.jwt.services.UserService;
 import ma.m2t.chaabipay.services.implement.ChangePasswordRequest;
+import ma.m2t.chaabipay.services.implement.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
