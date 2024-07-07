@@ -8,6 +8,7 @@ public interface TokenService {
     ///****************************************************************************************************
 //Post
     Token saveNewToken(Token token);
+
     void callback();
 
     ///****************************************************************************************************
@@ -25,7 +26,7 @@ public interface TokenService {
             String customerMail,
             String currency,
             String marchandId
-    ) throws Exception ;
+    ) throws Exception;
 
 
     String CallbackTokenReceived();

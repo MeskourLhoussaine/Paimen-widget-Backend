@@ -2,7 +2,8 @@ package ma.m2t.chaabipay.controller;
 
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
-import ma.m2t.chaabipay.emailing.EmailService;
+
+import ma.m2t.chaabipay.services.implement.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,13 @@ public class MailApi {
             @RequestParam("message") String message) {
         emailService.sendEmail(subject, nom, message);
     }
+
+    @PostMapping("/send-token")
+    public String sendTokenMail(@RequestParam String name, @RequestParam String toEmail, @RequestParam String token) throws MessagingException {
+        this.emailService.sendTokenMail(name, toEmail, token);
+        return "Email Sent Successfully";
+    }
+
 /*
     @PostMapping("/send-email-contact")
     public void sendContact(

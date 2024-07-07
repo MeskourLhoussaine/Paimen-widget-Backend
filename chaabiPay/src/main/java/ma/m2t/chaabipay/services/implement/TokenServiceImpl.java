@@ -1,4 +1,5 @@
 package ma.m2t.chaabipay.services.implement;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -6,8 +7,6 @@ import ma.m2t.chaabipay.dtos.TransactionDTO;
 import ma.m2t.chaabipay.entites.Token;
 import ma.m2t.chaabipay.services.TokenService;
 import ma.m2t.chaabipay.services.TransactionService;
-import org.json.JSONObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -37,7 +37,7 @@ import java.util.Map;
 public class TokenServiceImpl implements TokenService {
 
     private static final String TOKEN_URL = "https://oper-token-api-preprod.m2t.ma/api/v2/token";
-    private static final String EXTCHANGERATE_API_KEY = "65b1a3726698140ab479285c";
+    private static final String EXTCHANGERATE_API_KEY = "4044ed9d37053959ab585fba";
     private static final String EXTCHANGERATE_API_URL = "https://v6.exchangerate-api.com/v6/" + EXTCHANGERATE_API_KEY + "/latest/";
 
     @Autowired
