@@ -24,9 +24,11 @@ public class Merchant {
     @Column(nullable = false, length = 12, unique = true)
     private String merchantName;
     private String merchantDescrip;
+    @Column(  unique = true)
     private String merchantHost; //le lien
     private String merchantUrl; //logoUrl
     private String marchandPhone;//+
+    @Column(unique = true)
     private String marchandEmail;//+
     @Enumerated(EnumType.STRING)
     private Status marchandStatus;//+

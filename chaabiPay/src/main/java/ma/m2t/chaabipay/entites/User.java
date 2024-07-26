@@ -41,6 +41,7 @@ public class User {
   @NotBlank
   @Size(max = 100)
   @Email
+  @Column(nullable = false, length = 100, unique = true)
   private String email;
 
     @NotBlank

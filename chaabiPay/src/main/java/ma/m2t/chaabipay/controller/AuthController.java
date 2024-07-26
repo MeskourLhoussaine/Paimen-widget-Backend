@@ -222,6 +222,12 @@ public class AuthController {
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
 
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already taken!"));
+        }
+
         // Créer un nouvel utilisateur avec le statut par défaut "Inactive"
         User user = new User(
                 signUpRequest.getUsername(),

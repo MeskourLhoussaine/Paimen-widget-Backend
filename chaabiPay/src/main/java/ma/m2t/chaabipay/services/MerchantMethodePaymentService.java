@@ -23,4 +23,5 @@ public interface MerchantMethodePaymentService {
                                          /**---#---**/
     void updateMerchantMethodStatusByPaymentMethodId(Long paymentMethodId,Long merchantId,  boolean status) throws MerchantExceptionNotFound;;
 
+    // List<Map<String, Object>> findPaymentMethodStatusByMerchantId(Long merchantId) throws MerchantExceptionNotFound;
 }
