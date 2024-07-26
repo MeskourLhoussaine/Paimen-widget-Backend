@@ -111,7 +111,7 @@ public class EmailService {
         String imagePath = "static/images/footer.png";
         Resource imageSource = new ClassPathResource(imagePath);
 
-       /* String header = "Cher "+toEmail+",\n\n";*/
+       /*f String header = "Cher "+toEmail+",\n\n";*/
         String header = "Cher nouveau marchand,\n\n";
         String footer = "\n\nCordialement,\nPayPik\n";
 
