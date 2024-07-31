@@ -40,7 +40,9 @@ public class MerchantMethodePaymentServiseImpl implements MerchantMethodePayment
         List<Map<String, Object>> paymentMethods = new ArrayList<>();
 
         for (MerchantMethodePayment association : existingAssociations) {
-            existingPaymentMethodIds.add(association.getPaymentMethod().getPaymentMethodId());
+            if (association.isStatus()){
+                existingPaymentMethodIds.add(association.getPaymentMethod().getPaymentMethodId());
+            }
         }
 
         for (Long paymentMethodId : existingPaymentMethodIds) {
