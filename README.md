@@ -1,7 +1,7 @@
 <div align="center">
 <img src="https://i.ibb.co/gFZGbV3/Logopng.png" alt="AFMM logo" width="200" height="auto" />
   
-![](https://img.shields.io/badge/ANAS-ANASRI-green)
+
 
   <h1>PayPik</h1>
   <h1>(payment platform)</h1>
