@@ -2,8 +2,10 @@
 <img src="https://i.ibb.co/gFZGbV3/Logopng.png" alt="AFMM logo" width="200" height="auto" />
   
 
+# PayPik - Backend
 
-  <h1>PayPik</h1>
+Ce dépôt contient le backend du widget de paiement **PayPik**, développé en Java avec Spring Boot. **PayPik** permet aux commerçants d'intégrer facilement des solutions de paiement en ligne telles que PayPal, carte bancaire et paiement par token.
+
   <h1>(payment platform)</h1>
 
 
